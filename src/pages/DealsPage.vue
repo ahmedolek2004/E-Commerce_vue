@@ -1,9 +1,78 @@
 <template>
   <div class="container py-5">
-    <h1 class="h3">Deals</h1>
-    <p class="text-muted">Special offers and discounts.</p>
+    <h1 class="mb-4">Hot Deals</h1>
+
+    <!-- لو مفيش عروض -->
+    <div v-if="deals.length === 0" class="alert alert-info">
+      No deals available at the moment.
+    </div>
+
+    <!-- شبكة العروض -->
+    <div class="row">
+      <div class="col-md-4 mb-4" v-for="deal in deals" :key="deal.id">
+        <div class="card h-100 shadow-sm">
+          <img :src="deal.image" class="card-img-top" :alt="deal.title" />
+          <div class="card-body">
+            <h5 class="card-title">{{ deal.title }}</h5>
+            <p class="card-text text-muted">{{ deal.description }}</p>
+            <p>
+              <span class="text-danger fw-bold">{{ formatCurrency(deal.discountPrice) }}</span>
+              <span class="text-muted text-decoration-line-through ms-2">{{ formatCurrency(deal.originalPrice) }}</span>
+            </p>
+            <RouterLink
+              :to="`/products/${deal.productId}`"
+              class="btn btn-primary btn-sm"
+            >
+              View Product
+            </RouterLink>
+          </div>
+          <div class="card-footer text-muted">
+            Offer valid until {{ deal.validUntil }}
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup>
+import { ref } from "vue"
+import { RouterLink } from "vue-router"
+
+// بيانات تجريبية للعروض
+const deals = ref([
+  {
+    id: "d1",
+    productId: "p1",
+    title: "Smartphone Deal",
+    description: "Latest Android phone with 20% off.",
+    originalPrice: 299.99,
+    discountPrice: 239.99,
+    validUntil: "31 Dec 2025",
+    image: "/images/electronics.webp",
+  },
+  {
+    id: "d2",
+    productId: "p2",
+    title: "Laptop Discount",
+    description: "Save $200 on powerful laptops.",
+    originalPrice: 899.99,
+    discountPrice: 699.99,
+    validUntil: "15 Jan 2026",
+    image: "/images/electronics.webp",
+  },
+  {
+    id: "d3",
+    productId: "p3",
+    title: "Fashion Sale",
+    description: "Buy 2 get 1 free on T-Shirts.",
+    originalPrice: 19.99,
+    discountPrice: 13.33,
+    validUntil: "10 Jan 2026",
+    image: "/images/fashion.webp",
+  },
+])
+
+// تنسيق السعر
+const formatCurrency = (value) => `$${value.toFixed(2)}`
 </script>
