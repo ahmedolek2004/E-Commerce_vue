@@ -1,96 +1,113 @@
 <template>
   <div class="container py-5">
-    <h1 class="mb-4 text-center">Authentication</h1>
+    <h2 class="mb-4">Authentication</h2>
 
-    <ul class="nav nav-tabs mb-4" id="authTabs" role="tablist">
-      <li class="nav-item" role="presentation">
-        <button
-          class="nav-link active"
-          id="login-tab"
-          data-bs-toggle="tab"
-          data-bs-target="#login"
-          type="button"
-          role="tab"
-        >
-          Login
-        </button>
-      </li>
-      <li class="nav-item" role="presentation">
-        <button
-          class="nav-link"
-          id="signup-tab"
-          data-bs-toggle="tab"
-          data-bs-target="#signup"
-          type="button"
-          role="tab"
-        >
-          Signup
-        </button>
-      </li>
-    </ul>
+    <!-- زر التبديل بين Login و Register -->
+    <div class="mb-3">
+      <button class="btn btn-outline-primary me-2" @click="mode = 'login'">Login</button>
+      <button class="btn btn-outline-success" @click="mode = 'register'">Register</button>
+    </div>
 
-    <div class="tab-content">
-      <!-- Login Form -->
-      <div class="tab-pane fade show active" id="login" role="tabpanel">
-        <form @submit.prevent="handleLogin" class="card p-4 shadow-sm">
-          <div class="mb-3">
-            <label for="loginEmail" class="form-label">Email</label>
-            <input v-model="loginEmail" type="email" class="form-control" id="loginEmail" required />
-          </div>
-          <div class="mb-3">
-            <label for="loginPassword" class="form-label">Password</label>
-            <input v-model="loginPassword" type="password" class="form-control" id="loginPassword" required />
-          </div>
-          <button type="submit" class="btn btn-primary w-100">Login</button>
-        </form>
+    <!-- Login Form -->
+    <div v-if="mode === 'login' && !currentUser" class="card mb-4">
+      <div class="card-body">
+        <h5 class="card-title">Login</h5>
+        <input v-model="loginEmail" type="email" class="form-control mb-2" placeholder="Email" />
+        <input v-model="loginPassword" type="password" class="form-control mb-2" placeholder="Password" />
+        <button @click="handleLogin" class="btn btn-primary">Login</button>
       </div>
+    </div>
 
-      <!-- Signup Form -->
-      <div class="tab-pane fade" id="signup" role="tabpanel">
-        <form @submit.prevent="handleSignup" class="card p-4 shadow-sm">
-          <div class="mb-3">
-            <label for="signupName" class="form-label">Name</label>
-            <input v-model="signupName" type="text" class="form-control" id="signupName" required />
-          </div>
-          <div class="mb-3">
-            <label for="signupEmail" class="form-label">Email</label>
-            <input v-model="signupEmail" type="email" class="form-control" id="signupEmail" required />
-          </div>
-          <div class="mb-3">
-            <label for="signupPassword" class="form-label">Password</label>
-            <input v-model="signupPassword" type="password" class="form-control" id="signupPassword" required />
-          </div>
-          <div class="mb-3">
-            <label for="ConfirmsignupPassword" class="form-label">ConfirmPassword</label>
-            <input v-model="ConfirmsignupPassword" type="password" class="form-control" id="ConfirmsignupPassword" required />
-          </div>
-          <button type="submit" class="btn btn-success w-100">Signup</button>
-        </form>
+    <!-- Register Form -->
+    <div v-if="mode === 'register' && !currentUser" class="card mb-4">
+      <div class="card-body">
+        <h5 class="card-title">Register</h5>
+        <input v-model="registerName" type="text" class="form-control mb-2" placeholder="Name" />
+        <input v-model="registerEmail" type="email" class="form-control mb-2" placeholder="Email" />
+        <input v-model="registerPassword" type="password" class="form-control mb-2" placeholder="Password" />
+        <input v-model="confirmPassword" type="password" class="form-control mb-2" placeholder="Confirm Password" />
+        <button @click="handleRegister" class="btn btn-success">Register</button>
+      </div>
+    </div>
+
+    <!-- Logout -->
+    <div v-if="currentUser" class="card mb-4">
+      <div class="card-body">
+        <h5 class="card-title">Logout</h5>
+        <button @click="handleLogout" class="btn btn-danger">Logout</button>
+      </div>
+    </div>
+
+    <!-- Current User (Admin only) -->
+    <div v-if="isAdmin" class="card">
+      <div class="card-body">
+        <h5 class="card-title">Current User</h5>
+        <p>👤 {{ currentUser.email }}</p>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from "vue"
+import { ref, onMounted } from "vue"
+import { auth } from "../firebase"
+import { register, login, logout } from "../services/authService"
+import { onAuthStateChanged } from "firebase/auth"
 
-// Login form state
+const mode = ref("login")
+
+const registerName = ref("")
+const registerEmail = ref("")
+const registerPassword = ref("")
+const confirmPassword = ref("")
 const loginEmail = ref("")
 const loginPassword = ref("")
+const currentUser = ref(null)
+const isAdmin = ref(false)
 
-// Signup form state
-const signupName = ref("")
-const signupEmail = ref("")
-const signupPassword = ref("")
-
-// Handlers
-const handleLogin = () => {
-  console.log("Login with:", loginEmail.value, loginPassword.value)
-  // هنا تقدر تربط بـ Firebase Auth أو API
+// تسجيل جديد
+const handleRegister = async () => {
+  if (registerPassword.value !== confirmPassword.value) {
+    alert("❌ Passwords do not match")
+    return
+  }
+  try {
+    await register(registerName.value, registerEmail.value, registerPassword.value)
+    alert(`✅ Registered successfully! Welcome ${registerName.value}`)
+  } catch (err) {
+    alert("❌ " + err.message)
+  }
 }
 
-const handleSignup = () => {
-  console.log("Signup with:", signupName.value, signupEmail.value, signupPassword.value)
-  // هنا تقدر تربط بـ Firebase Auth أو API
+// تسجيل دخول
+const handleLogin = async () => {
+  try {
+    await login(loginEmail.value, loginPassword.value)
+    alert("✅ Logged in successfully!")
+  } catch (err) {
+    alert("❌ " + err.message)
+  }
 }
+
+// تسجيل خروج
+const handleLogout = async () => {
+  try {
+    await logout()
+    alert("✅ Logged out successfully!")
+  } catch (err) {
+    alert("❌ " + err.message)
+  }
+}
+
+// متابعة المستخدم الحالي
+onMounted(() => {
+  onAuthStateChanged(auth, (user) => {
+    currentUser.value = user
+    if (user && user.email === "admin@site.com") {
+      isAdmin.value = true
+    } else {
+      isAdmin.value = false
+    }
+  })
+})
 </script>

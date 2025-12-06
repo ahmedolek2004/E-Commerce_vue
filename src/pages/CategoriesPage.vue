@@ -55,19 +55,19 @@ const categories = ref([
   {
     id: "c4",
     name: "Book",
-    description: "",
+    description: "books.",
     image: "/images/book.webp",
   },
   {
     id: "c3",
     name: "Sports & Outdoors",
-    description: ".",
+    description: "sport.",
     image: "/images/Toys & Games.webp",
   },
   {
     id: "c3",
     name: "Toys & Games",
-    description: ".",
+    description: "games.",
     image: "/images/Sports & Outdoors.webp",
   },
 ])
