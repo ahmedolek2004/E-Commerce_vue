@@ -1,48 +1,54 @@
 <template>
-  <div class="container py-5">
-    <h2 class="mb-4">Authentication</h2>
+  <div class="d-flex justify-content-center align-items-center vh-100">
+    <div class="w-50"> <!-- عرض نص الشاشة -->
+      <h2 class="mb-4 text-center">Authentication</h2>
 
-    <!-- زر التبديل بين Login و Register -->
-    <div class="mb-3">
-      <button class="btn btn-outline-primary me-2" @click="mode = 'login'">Login</button>
-      <button class="btn btn-outline-success" @click="mode = 'register'">Register</button>
-    </div>
-
-    <!-- Login Form -->
-    <div v-if="mode === 'login' && !currentUser" class="card mb-4">
-      <div class="card-body">
-        <h5 class="card-title">Login</h5>
-        <input v-model="loginEmail" type="email" class="form-control mb-2" placeholder="Email" />
-        <input v-model="loginPassword" type="password" class="form-control mb-2" placeholder="Password" />
-        <button @click="handleLogin" class="btn btn-primary">Login</button>
+      <!-- زر التبديل بين Login و Register -->
+      <div class="mb-3 d-flex justify-content-center">
+        <button class="btn btn-outline-primary me-2" @click="mode = 'login'">Login</button>
+        <button class="btn btn-outline-success" @click="mode = 'register'">Register</button>
       </div>
-    </div>
 
-    <!-- Register Form -->
-    <div v-if="mode === 'register' && !currentUser" class="card mb-4">
-      <div class="card-body">
-        <h5 class="card-title">Register</h5>
-        <input v-model="registerName" type="text" class="form-control mb-2" placeholder="Name" />
-        <input v-model="registerEmail" type="email" class="form-control mb-2" placeholder="Email" />
-        <input v-model="registerPassword" type="password" class="form-control mb-2" placeholder="Password" />
-        <input v-model="confirmPassword" type="password" class="form-control mb-2" placeholder="Confirm Password" />
-        <button @click="handleRegister" class="btn btn-success">Register</button>
+      <!-- Login Form -->
+      <div v-if="mode === 'login' && !currentUser" class="card mb-4 shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title text-center">Login</h5>
+          <input v-model="loginEmail" type="email" class="form-control mb-2" placeholder="Email" />
+          <input v-model="loginPassword" type="password" class="form-control mb-2" placeholder="Password" />
+          <div class="d-flex justify-content-center">
+            <button @click="handleLogin" class="btn btn-primary">Login</button>
+          </div>
+        </div>
       </div>
-    </div>
 
-    <!-- Logout -->
-    <div v-if="currentUser" class="card mb-4">
-      <div class="card-body">
-        <h5 class="card-title">Logout</h5>
-        <button @click="handleLogout" class="btn btn-danger">Logout</button>
+      <!-- Register Form -->
+      <div v-if="mode === 'register' && !currentUser" class="card mb-4 shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title text-center">Register</h5>
+          <input v-model="registerName" type="text" class="form-control mb-2" placeholder="Name" />
+          <input v-model="registerEmail" type="email" class="form-control mb-2" placeholder="Email" />
+          <input v-model="registerPassword" type="password" class="form-control mb-2" placeholder="Password" />
+          <input v-model="confirmPassword" type="password" class="form-control mb-2" placeholder="Confirm Password" />
+          <div class="d-flex justify-content-center">
+            <button @click="handleRegister" class="btn btn-success">Register</button>
+          </div>
+        </div>
       </div>
-    </div>
 
-    <!-- Current User (Admin only) -->
-    <div v-if="isAdmin" class="card">
-      <div class="card-body">
-        <h5 class="card-title">Current User</h5>
-        <p>👤 {{ currentUser.email }}</p>
+      <!-- Logout -->
+      <div v-if="currentUser" class="card mb-4 shadow-sm">
+        <div class="card-body text-center">
+          <h5 class="card-title">Logout</h5>
+          <button @click="handleLogout" class="btn btn-danger">Logout</button>
+        </div>
+      </div>
+
+      <!-- Current User (Admin only) -->
+      <div v-if="isAdmin" class="card shadow-sm">
+        <div class="card-body text-center">
+          <h5 class="card-title">Current User</h5>
+          <p>👤 {{ currentUser.email }}</p>
+        </div>
       </div>
     </div>
   </div>
