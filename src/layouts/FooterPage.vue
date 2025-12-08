@@ -77,7 +77,7 @@
       </div>
     </div>
   </footer>
-  <link rel="stylesheet" href="../main.css">
+
 
 </template>
 

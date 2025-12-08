@@ -13,9 +13,8 @@ import CheckoutPage from '../pages/CheckoutPage.vue'
 import AuthPage from '../pages/AuthPage.vue'
 import AdminPage from '../pages/AdminPage.vue'
 
-
-
-
+import { auth, db } from '../firebase'
+import { doc, getDoc } from 'firebase/firestore'
 
 const routes = [
   { path: '/', name: 'home', component: HomePage },
@@ -29,13 +28,40 @@ const routes = [
   { path: '/cart', name: 'cart', component: CartPage },
   { path: '/checkout', name: 'checkout', component: CheckoutPage },
   { path: '/auth', name: 'auth', component: AuthPage },
-    { path: '/admin', component: AdminPage },
+  { path: '/admin', name: 'admin', component: AdminPage, meta: { requiresAdmin: true } },
 ]
-
 
 const router = createRouter({
   history: createWebHistory(),
   routes,
+})
+
+// دالة helper علشان نستنى المستخدم الحالي
+function getCurrentUser() {
+  return new Promise((resolve, reject) => {
+    const unsubscribe = auth.onAuthStateChanged(user => {
+      unsubscribe()
+      resolve(user)
+    }, reject)
+  })
+}
+
+router.beforeEach(async (to, from, next) => {
+  if (to.meta.requiresAdmin) {
+    const user = await getCurrentUser()
+    if (user) {
+      const docSnap = await getDoc(doc(db, "users", user.uid))
+      if (docSnap.exists() && docSnap.data().role === "admin") {
+        next() // يدخل الأدمن
+      } else {
+        next("/") // يرجع للهوم لو مش أدمن
+      }
+    } else {
+      next("/auth") // لو مش مسجل دخول يرجعه للـ Auth
+    }
+  } else {
+    next()
+  }
 })
 
 export default router
