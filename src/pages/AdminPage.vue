@@ -35,7 +35,7 @@
             <th>Name</th>
             <th>Email</th>
             <th>Role</th>
-            <th style="width:200px;">Actions</th>
+            <th style="width:250px;">Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -51,6 +51,7 @@
             <td>
               <div class="btn-group">
                 <button @click="makeAdmin(user.id)" class="btn btn-sm btn-warning">Make Admin</button>
+                <button @click="makeUser(user.id)" class="btn btn-sm btn-secondary">Make User</button>
                 <button @click="removeUser(user.id)" class="btn btn-sm btn-danger">Delete</button>
               </div>
             </td>
@@ -67,7 +68,6 @@
 <script setup>
 import { ref, onMounted } from "vue"
 import { db } from "../firebase"
-// تأكد إن المسار ده صحيح حسب مشروعك
 import {
   collection,
   getDocs,
@@ -135,6 +135,18 @@ const makeAdmin = async (uid) => {
   try {
     await updateDoc(doc(db, "users", uid), { role: "admin" })
     successMsg.value = "Role updated to admin."
+    await fetchUsers()
+  } catch (error) {
+    console.error("Error updating role:", error)
+    errorMsg.value = error.message || "Failed to update role."
+  }
+}
+
+const makeUser = async (uid) => {
+  clearMessages()
+  try {
+    await updateDoc(doc(db, "users", uid), { role: "user" })
+    successMsg.value = "Role updated to user."
     await fetchUsers()
   } catch (error) {
     console.error("Error updating role:", error)

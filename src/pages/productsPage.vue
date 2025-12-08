@@ -62,6 +62,48 @@ const products = ref([
     price: 199.99,
     image: "/images/1.webp",
   },
+   {
+    id: "p4",
+    name: "Product 4",
+    description: "This is a great product.",
+    price: 99.99,
+    image: "/images/1.webp",
+  },
+  {
+    id: "p5",
+    name: "Product 5",
+    description: "Another amazing product.",
+    price: 149.99,
+    image: "/images/1.webp",
+  },
+  {
+    id: "p6",
+    name: "Product 6",
+    description: "High quality and affordable.",
+    price: 199.99,
+    image: "/images/1.webp",
+  },
+   {
+    id: "p7",
+    name: "Product 7",
+    description: "This is a great product.",
+    price: 99.99,
+    image: "/images/1.webp",
+  },
+  {
+    id: "p8",
+    name: "Product 8",
+    description: "Another amazing product.",
+    price: 149.99,
+    image: "/images/1.webp",
+  },
+  {
+    id: "p9",
+    name: "Product 9",
+    description: "High quality and affordable.",
+    price: 199.99,
+    image: "/images/1.webp",
+  },
 ])
 
 // إضافة للسلة (مبدئيًا مجرد console.log)

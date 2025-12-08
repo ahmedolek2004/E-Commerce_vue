@@ -1,6 +1,6 @@
 <template>
   <div class="d-flex justify-content-center align-items-center vh-100">
-    <div class="w-50"> <!-- عرض نص الشاشة -->
+    <div class="w-50">
       <h2 class="mb-4 text-center">Authentication</h2>
 
       <!-- زر التبديل بين Login و Register -->
@@ -14,7 +14,24 @@
         <div class="card-body">
           <h5 class="card-title text-center">Login</h5>
           <input v-model="loginEmail" type="email" class="form-control mb-2" placeholder="Email" />
-          <input v-model="loginPassword" type="password" class="form-control mb-2" placeholder="Password" />
+
+          <!-- Password with eye toggle -->
+          <div class="input-group mb-2">
+            <input
+              v-model="loginPassword"
+              :type="showLoginPassword ? 'text' : 'password'"
+              class="form-control"
+              placeholder="Password"
+            />
+            <button
+              type="button"
+              class="btn btn-outline-secondary"
+              @click="showLoginPassword = !showLoginPassword"
+            >
+              <i :class="showLoginPassword ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
+            </button>
+          </div>
+
           <div class="d-flex justify-content-center">
             <button @click="handleLogin" class="btn btn-primary">Login</button>
           </div>
@@ -27,8 +44,41 @@
           <h5 class="card-title text-center">Register</h5>
           <input v-model="registerName" type="text" class="form-control mb-2" placeholder="Name" />
           <input v-model="registerEmail" type="email" class="form-control mb-2" placeholder="Email" />
-          <input v-model="registerPassword" type="password" class="form-control mb-2" placeholder="Password" />
-          <input v-model="confirmPassword" type="password" class="form-control mb-2" placeholder="Confirm Password" />
+
+          <!-- Register Password -->
+          <div class="input-group mb-2">
+            <input
+              v-model="registerPassword"
+              :type="showRegisterPassword ? 'text' : 'password'"
+              class="form-control"
+              placeholder="Password"
+            />
+            <button
+              type="button"
+              class="btn btn-outline-secondary"
+              @click="showRegisterPassword = !showRegisterPassword"
+            >
+              <i :class="showRegisterPassword ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
+            </button>
+          </div>
+
+          <!-- Confirm Password -->
+          <div class="input-group mb-2">
+            <input
+              v-model="confirmPassword"
+              :type="showConfirmPassword ? 'text' : 'password'"
+              class="form-control"
+              placeholder="Confirm Password"
+            />
+            <button
+              type="button"
+              class="btn btn-outline-secondary"
+              @click="showConfirmPassword = !showConfirmPassword"
+            >
+              <i :class="showConfirmPassword ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
+            </button>
+          </div>
+
           <div class="d-flex justify-content-center">
             <button @click="handleRegister" class="btn btn-success">Register</button>
           </div>
@@ -59,7 +109,9 @@ import { ref, onMounted } from "vue"
 import { auth } from "../firebase"
 import { register, login, logout } from "../services/authService"
 import { onAuthStateChanged } from "firebase/auth"
+import { useRouter } from "vue-router"
 
+const router = useRouter()
 const mode = ref("login")
 
 const registerName = ref("")
@@ -71,6 +123,11 @@ const loginPassword = ref("")
 const currentUser = ref(null)
 const isAdmin = ref(false)
 
+// متغيرات العين
+const showLoginPassword = ref(false)
+const showRegisterPassword = ref(false)
+const showConfirmPassword = ref(false)
+
 // تسجيل جديد
 const handleRegister = async () => {
   if (registerPassword.value !== confirmPassword.value) {
@@ -80,6 +137,7 @@ const handleRegister = async () => {
   try {
     await register(registerName.value, registerEmail.value, registerPassword.value)
     alert(`✅ Registered successfully! Welcome ${registerName.value}`)
+    router.push("/") // تحويل للـ Home بعد التسجيل
   } catch (err) {
     alert("❌ " + err.message)
   }
@@ -90,6 +148,7 @@ const handleLogin = async () => {
   try {
     await login(loginEmail.value, loginPassword.value)
     alert("✅ Logged in successfully!")
+    router.push("/") // تحويل للـ Home بعد الدخول
   } catch (err) {
     alert("❌ " + err.message)
   }
@@ -100,6 +159,7 @@ const handleLogout = async () => {
   try {
     await logout()
     alert("✅ Logged out successfully!")
+    router.push("/auth") // يرجع لصفحة الـ Auth بعد الخروج
   } catch (err) {
     alert("❌ " + err.message)
   }

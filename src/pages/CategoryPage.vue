@@ -42,7 +42,7 @@ const products = ref([
   { id: "p2", name: "Laptop", description: "Powerful laptop for work", price: 899.99, image: "/images/electronics.webp", category: "electronics" },
   { id: "p3", name: "T-Shirt", description: "Comfortable cotton shirt", price: 19.99, image: "/images/fashion.webp", category: "fashion" },
   { id: "p4", name: "Sneakers", description: "Stylish running shoes", price: 59.99, image: "/images/fashion.webp", category: "fashion" },
-  { id: "p5", name: "Coffee Maker", description: "Automatic coffee machine", price: 129.99, image: "/images/home.webp", category: "home" },
+  { id: "p5", name: "Coffee Maker", description: "Automatic coffee machine", price: 129.99, image: "/images/Home & Garden.webp", category: "home" },
 ])
 
 // تصفية المنتجات حسب الـ id من الـ route

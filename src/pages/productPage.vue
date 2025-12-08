@@ -51,14 +51,14 @@ const products = ref([
     name: "Product 2",
     description: "Another amazing product.",
     price: 149.99,
-    image: "/images/2.webp",
+    image: "/images/1.webp",
   },
   {
     id: "p3",
     name: "Product 3",
     description: "High quality and affordable.",
     price: 199.99,
-    image: "/images/3.webp",
+    image: "/images/1.webp",
   },
 ])
 
