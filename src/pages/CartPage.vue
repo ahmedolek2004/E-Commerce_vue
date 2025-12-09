@@ -1,4 +1,8 @@
 <template>
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"
+  />
   <div class="container py-5">
     <h1 class="mb-4">Shopping Cart</h1>
 
@@ -39,9 +43,9 @@
           </td>
           <td>{{ formatCurrency(item.priceValue * item.quantity) }}</td>
           <td>
-            <button class="btn btn-danger btn-sm" @click="removeItem(item.id)">
-              Remove
-            </button>
+            <button @click="removeItem(item.id)" class="btn btn-sm btn-danger" title="Delete">
+                  <i class="bi bi-trash"></i>
+                </button>
           </td>
         </tr>
       </tbody>
