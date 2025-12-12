@@ -14,13 +14,20 @@ import AuthPage from '../pages/AuthPage.vue'
 import AdminPage from '../pages/AdminPage.vue'
 import SearchPage from '../pages/SearchPage.vue'
 
+// ✅ لازم تستورد auth و db و getDoc من Firebase
 import { auth, db } from '../firebase'
 import { doc, getDoc } from 'firebase/firestore'
 
 const routes = [
   { path: '/', name: 'home', component: HomePage },
   { path: '/products', name: 'products', component: ProductsPage },
-  { path: '/products/:id', name: 'product', component: ProductPage },
+
+  {
+    path: "/products/:id",
+    name: "product-details",
+    component: ProductPage
+  },
+
   { path: '/categories', name: 'categories', component: CategoriesPage },
   { path: '/categories/:id', name: 'category', component: CategoryPage },
   { path: '/deals', name: 'deals', component: DealsPage },
@@ -30,8 +37,9 @@ const routes = [
   { path: '/checkout', name: 'checkout', component: CheckoutPage },
   { path: '/auth', name: 'auth', component: AuthPage },
   { path: '/search', name: 'search', component: SearchPage },
-  { path: '/admin', name: 'admin', component: AdminPage, meta: { requiresAdmin: true } },
 
+  // ✅ Route الأدمن لازم يكون فيه meta
+  { path: '/admin', name: 'admin', component: AdminPage, meta: { requiresAdmin: true } },
 ]
 
 const router = createRouter({
@@ -39,7 +47,7 @@ const router = createRouter({
   routes,
 })
 
-// دالة helper علشان نستنى المستخدم الحالي
+// ✅ دالة helper علشان نستنى المستخدم الحالي
 function getCurrentUser() {
   return new Promise((resolve, reject) => {
     const unsubscribe = auth.onAuthStateChanged(user => {
@@ -49,6 +57,7 @@ function getCurrentUser() {
   })
 }
 
+// ✅ Guard للأدمن
 router.beforeEach(async (to, from, next) => {
   if (to.meta.requiresAdmin) {
     const user = await getCurrentUser()

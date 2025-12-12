@@ -51,8 +51,6 @@
 
         </ul>
 
-
-
         <!-- ✅ Right Icons -->
         <ul class="navbar-nav">
 
@@ -62,10 +60,10 @@
               <i class="bi bi-cart3 fs-5"></i><br />
               <small>Cart</small>
               <span
-                v-if="cartCount > 0"
+                v-if="cartStore.cartCount > 0"
                 class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
               >
-                {{ cartCount }}
+                {{ cartStore.cartCount }}
               </span>
             </RouterLink>
           </li>
@@ -82,32 +80,35 @@
       </div>
     </div>
   </nav>
-  <!-- ✅ Search Bar Under Navbar -->
-<div class="bg-light py-2 shadow-sm search-bar-wrapper">
-  <div class="container">
-    <form class="d-flex" @submit.prevent="goSearch">
-      <input
-        v-model="searchQuery"
-        type="text"
-        class="form-control"
-        placeholder="Search products..."
-      />
-      <button class="btn btn-primary ms-2">
-        <i class="bi bi-search"></i>
-      </button>
-    </form>
-  </div>
-</div>
 
+  <!-- ✅ Search Bar Under Navbar -->
+  <div class="bg-light py-2 shadow-sm search-bar-wrapper">
+    <div class="container">
+      <form class="d-flex" @submit.prevent="goSearch">
+        <input
+          v-model="searchQuery"
+          type="text"
+          class="form-control"
+          placeholder="Search products..."
+        />
+        <button class="btn btn-primary ms-2">
+          <i class="bi bi-search"></i>
+        </button>
+      </form>
+    </div>
+  </div>
 </template>
 
 <script setup>
-import { RouterLink, useRouter } from 'vue-router'
-import { ref } from 'vue'
+import { RouterLink, useRouter } from "vue-router"
+import { ref } from "vue"
+import { useCartStore } from "../stores/cart"
 
-const cartCount = ref(0)
-const searchQuery = ref("")
 const router = useRouter()
+const searchQuery = ref("")
+
+// ✅ Pinia cart store
+const cartStore = useCartStore()
 
 const goSearch = () => {
   if (searchQuery.value.trim() !== "") {
@@ -120,6 +121,7 @@ const goSearch = () => {
 .navbar-nav .nav-link small {
   font-size: 0.75rem;
 }
+
 .search-bar-wrapper {
   position: sticky;
   top: 0;
@@ -131,5 +133,4 @@ const goSearch = () => {
     font-size: 14px;
   }
 }
-
 </style>

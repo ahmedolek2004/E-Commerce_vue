@@ -5,23 +5,23 @@
         <div id="homeSlider" class="carousel slide custom-carousel" data-bs-ride="carousel">
           <div class="carousel-inner rounded-4 shadow-sm">
             <div class="carousel-item active">
-              <img src="#" class="d-block w-100" alt="Electronics" />
+              <img src="/images/2.webp" class="d-block w-100" alt="Electronics" />
             </div>
 
             <div class="carousel-item">
-              <img src="#" class="d-block w-100" alt="Books" />
+              <img src="/images/3.webp" class="d-block w-100" alt="Books" />
             </div>
 
             <div class="carousel-item">
-              <img src="#" class="d-block w-100" alt="Fashion" />
+              <img src="/images/4.webp" class="d-block w-100" alt="Fashion" />
             </div>
 
             <div class="carousel-item">
-              <img src="#" class="d-block w-100" alt="Toys" />
+              <img src="/images/5.webp" class="d-block w-100" alt="Toys" />
             </div>
 
             <div class="carousel-item">
-              <img src="#" class="d-block w-100" alt="Sports" />
+              <img src="/images/6.webp" class="d-block w-100" alt="Sports" />
             </div>
           </div>
 
@@ -120,20 +120,20 @@ const categories = [
 ];
 
 const featured = [
-  { title: "Smart Watch", desc: "Latest model 2024", img: "#" },
-  { title: "Headphones", desc: "Noise cancelling", img: "#" },
-  { title: "Sneakers", desc: "Comfortable & stylish", img: "#" },
-  { title: "Laptop", desc: "High performance", img: "#" },
+  { title: "Smart Watch", desc: "Latest model 2024", img: "/images/1.webp" },
+  { title: "Headphones", desc: "Noise cancelling", img: "/images/1.webp" },
+  { title: "Sneakers", desc: "Comfortable & stylish", img: "/images/1.webp" },
+  { title: "Laptop", desc: "High performance", img: "/images/1.webp" },
 ];
 
 const deals = [
   {
     title: "50% Off Headphones",
     desc: "Limited time offer",
-    img: "#",
+    img: "/images/1.webp",
   },
-  { title: "Buy 1 Get 1 Free", desc: "Fashion sale", img: "#" },
-  { title: "Hot Deal: Smart TV", desc: "Save up to 30%", img: "#" },
+  { title: "Buy 1 Get 1 Free", desc: "Fashion sale", img: "/images/1.webp" },
+  { title: "Hot Deal: Smart TV", desc: "Save up to 30%", img: "/images/1.webp" },
 ];
 </script>
 

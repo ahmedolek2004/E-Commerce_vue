@@ -16,11 +16,16 @@
           Products
         </button>
       </li>
+
+      <li class="nav-item">
+        <button class="nav-link" :class="{ active: activeTab === 'categories' }" @click="activeTab = 'categories'">
+          Categories
+        </button>
+      </li>
     </ul>
 
     <!-- ✅ USERS TAB -->
     <div v-if="activeTab === 'users'">
-
       <h4 class="mb-3">Add New User</h4>
 
       <div class="row g-2 mb-4">
@@ -44,7 +49,6 @@
       <p v-if="errorMsg" class="text-danger">{{ errorMsg }}</p>
       <p v-if="successMsg" class="text-success">{{ successMsg }}</p>
 
-      <!-- ✅ Users Table -->
       <div v-if="users.length > 0" class="table-responsive">
         <table class="table table-striped align-middle">
           <thead class="table-dark">
@@ -67,16 +71,16 @@
                   {{ u.role }}
                 </span>
               </td>
-                <td>
-                  <button class="btn btn-warning btn-sm me-2" @click="startUserEdit(u)">Edit</button>
-                  <button @click="removeUser(u.id)" class="btn btn-danger btn-sm">Delete</button>
-                </td>
-
+              <td>
+                <button class="btn btn-warning btn-sm me-2" @click="startUserEdit(u)">Edit</button>
+                <button @click="removeUser(u.id)" class="btn btn-danger btn-sm">Delete</button>
+              </td>
             </tr>
           </tbody>
 
         </table>
       </div>
+
       <div v-if="editingUser" class="card p-3 mb-4 shadow-sm">
         <h5>Edit User</h5>
 
@@ -90,27 +94,31 @@
         <button class="btn btn-success me-2" @click="saveUserEdit">Save</button>
         <button class="btn btn-secondary" @click="cancelUserEdit">Cancel</button>
       </div>
-
-
     </div>
 
     <!-- ✅ PRODUCTS TAB -->
     <div v-if="activeTab === 'products'">
 
-      <!-- ✅ Add Product -->
       <h4 class="mb-3">Add New Product</h4>
 
       <form @submit.prevent="addProduct" class="mb-4">
         <input v-model="pTitle" class="form-control mb-2" placeholder="Title" />
         <input v-model="pPrice" class="form-control mb-2" placeholder="Price" type="number" />
-        <input v-model="pCategory" class="form-control mb-2" placeholder="Category" />
+
+        <!-- ✅ Dropdown for categories -->
+        <select v-model="pCategory" class="form-select mb-2">
+          <option disabled value="">Select Category</option>
+          <option v-for="c in categories" :key="c.id" :value="c.id">
+            {{ c.name }}
+          </option>
+        </select>
+
         <input v-model="pImg" class="form-control mb-2" placeholder="Image URL" />
         <textarea v-model="pDesc" class="form-control mb-2" placeholder="Description"></textarea>
 
         <button class="btn btn-primary">Add Product</button>
       </form>
 
-      <!-- ✅ Products Table -->
       <h4 class="mb-3">All Products</h4>
 
       <table class="table table-striped">
@@ -129,7 +137,8 @@
             <td><img :src="p.img" width="60" /></td>
             <td>{{ p.title }}</td>
             <td>{{ p.price }}</td>
-            <td>{{ p.category }}</td>
+            <td>{{ p.categoryName }}</td>
+
             <td>
               <button class="btn btn-warning btn-sm me-2" @click="startEdit(p)">Edit</button>
               <button class="btn btn-danger btn-sm" @click="deleteProduct(p.id)">Delete</button>
@@ -138,18 +147,77 @@
         </tbody>
 
       </table>
-      <!-- ✅ Edit Product Form -->
+
       <div v-if="editingProduct" class="card p-3 mb-4 shadow-sm">
         <h5>Edit Product</h5>
 
         <input v-model="editTitle" class="form-control mb-2" placeholder="Title" />
         <input v-model="editPrice" class="form-control mb-2" placeholder="Price" type="number" />
-        <input v-model="editCategory" class="form-control mb-2" placeholder="Category" />
+
+        <!-- ✅ Dropdown for editing -->
+        <select v-model="editCategory" class="form-select mb-2">
+          <option v-for="c in categories" :key="c.id" :value="c.id">
+            {{ c.name }}
+          </option>
+        </select>
+
         <input v-model="editImg" class="form-control mb-2" placeholder="Image URL" />
         <textarea v-model="editDesc" class="form-control mb-2" placeholder="Description"></textarea>
 
         <button class="btn btn-success me-2" @click="saveEdit">Save</button>
-        <button class="btn btn-secondary " @click="cancelEdit">Cancel</button>
+        <button class="btn btn-secondary" @click="cancelEdit">Cancel</button>
+      </div>
+
+    </div>
+
+    <!-- ✅ CATEGORIES TAB -->
+    <div v-if="activeTab === 'categories'">
+
+      <h4 class="mb-3">Add New Category</h4>
+
+      <form @submit.prevent="addCategory" class="mb-4">
+        <input v-model="cName" class="form-control mb-2" placeholder="Category Name" />
+        <input v-model="cDesc" class="form-control mb-2" placeholder="Description" />
+        <input v-model="cImg" class="form-control mb-2" placeholder="Image URL" />
+
+        <button class="btn btn-primary">Add Category</button>
+      </form>
+
+      <h4 class="mb-3">All Categories</h4>
+
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Image</th>
+            <th>Name</th>
+            <th>Description</th>
+            <th style="min-width: 150px">Actions</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr v-for="c in categories" :key="c.id">
+            <td><img :src="c.image" width="60" /></td>
+            <td>{{ c.name }}</td>
+            <td>{{ c.description }}</td>
+            <td>
+              <button class="btn btn-warning btn-sm me-2" @click="startCategoryEdit(c)">Edit</button>
+              <button class="btn btn-danger btn-sm" @click="deleteCategory(c.id)">Delete</button>
+            </td>
+          </tr>
+        </tbody>
+
+      </table>
+
+      <div v-if="editingCategory" class="card p-3 mb-4 shadow-sm">
+        <h5>Edit Category</h5>
+
+        <input v-model="editCName" class="form-control mb-2" placeholder="Name" />
+        <input v-model="editCDesc" class="form-control mb-2" placeholder="Description" />
+        <input v-model="editCImg" class="form-control mb-2" placeholder="Image URL" />
+
+        <button class="btn btn-success me-2" @click="saveCategoryEdit">Save</button>
+        <button class="btn btn-secondary" @click="cancelCategoryEdit">Cancel</button>
       </div>
 
     </div>
@@ -200,8 +268,8 @@ const saveUserEdit = async () => {
   })
 
   editingUser.value = null
-  alert("✅ User updated successfully")
 }
+
 const cancelUserEdit = () => {
   editingUser.value = null
 }
@@ -231,8 +299,6 @@ const addUser = async () => {
   successMsg.value = "User added"
 }
 
-
-
 const removeUser = async (id) => {
   await deleteDoc(doc(db, "users", id))
 }
@@ -242,7 +308,7 @@ const products = ref([])
 
 const pTitle = ref("")
 const pPrice = ref("")
-const pCategory = ref("")
+const pCategory = ref("")   // ✅ Dropdown value = categoryId
 const pImg = ref("")
 const pDesc = ref("")
 
@@ -253,10 +319,13 @@ const fetchProducts = () => {
 }
 
 const addProduct = async () => {
+  const selectedCategory = categories.value.find(c => c.id === pCategory.value)
+
   await addDoc(collection(db, "products"), {
     title: pTitle.value,
     price: Number(pPrice.value),
-    category: pCategory.value,
+    categoryId: pCategory.value,
+    categoryName: selectedCategory?.name || "",
     img: pImg.value,
     desc: pDesc.value,
     createdAt: serverTimestamp()
@@ -274,7 +343,7 @@ const editingProduct = ref(null)
 
 const editTitle = ref("")
 const editPrice = ref("")
-const editCategory = ref("")
+const editCategory = ref("")   // ✅ Dropdown
 const editImg = ref("")
 const editDesc = ref("")
 
@@ -282,22 +351,24 @@ const startEdit = (product) => {
   editingProduct.value = product.id
   editTitle.value = product.title
   editPrice.value = product.price
-  editCategory.value = product.category
+  editCategory.value = product.categoryId
   editImg.value = product.img
   editDesc.value = product.desc
 }
 
 const saveEdit = async () => {
+  const selectedCategory = categories.value.find(c => c.id === editCategory.value)
+
   await updateDoc(doc(db, "products", editingProduct.value), {
     title: editTitle.value,
     price: Number(editPrice.value),
-    category: editCategory.value,
+    categoryId: editCategory.value,
+    categoryName: selectedCategory?.name || "",
     img: editImg.value,
     desc: editDesc.value,
   })
 
   editingProduct.value = null
-  alert("✅ Product updated successfully")
 }
 
 const cancelEdit = () => {
@@ -308,12 +379,72 @@ const deleteProduct = async (id) => {
   await deleteDoc(doc(db, "products", id))
 }
 
+
+/* ✅ CATEGORIES */
+const categories = ref([])
+
+const cName = ref("")
+const cDesc = ref("")
+const cImg = ref("")
+
+const fetchCategories = () => {
+  onSnapshot(collection(db, "categories"), snap => {
+    categories.value = snap.docs.map(d => ({ id: d.id, ...d.data() }))
+  })
+}
+
+const addCategory = async () => {
+  await addDoc(collection(db, "categories"), {
+    name: cName.value,
+    description: cDesc.value,
+    image: cImg.value,
+    createdAt: serverTimestamp()
+  })
+
+  cName.value = ""
+  cDesc.value = ""
+  cImg.value = ""
+}
+
+const editingCategory = ref(null)
+
+const editCName = ref("")
+const editCDesc = ref("")
+const editCImg = ref("")
+
+const startCategoryEdit = (cat) => {
+  editingCategory.value = cat.id
+  editCName.value = cat.name
+  editCDesc.value = cat.description
+  editCImg.value = cat.image
+}
+
+const saveCategoryEdit = async () => {
+  await updateDoc(doc(db, "categories", editingCategory.value), {
+    name: editCName.value,
+    description: editCDesc.value,
+    image: editCImg.value
+  })
+
+  editingCategory.value = null
+}
+
+const cancelCategoryEdit = () => {
+  editingCategory.value = null
+}
+
+const deleteCategory = async (id) => {
+  await deleteDoc(doc(db, "categories", id))
+}
+
 /* ✅ Load Data */
 onMounted(() => {
   fetchUsers()
   fetchProducts()
+  fetchCategories()
 })
 </script>
+
 
 <style scoped>
 /* ✅ تحسين شكل الجداول */
