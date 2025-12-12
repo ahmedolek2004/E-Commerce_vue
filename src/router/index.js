@@ -12,6 +12,7 @@ import CartPage from '../pages/CartPage.vue'
 import CheckoutPage from '../pages/CheckoutPage.vue'
 import AuthPage from '../pages/AuthPage.vue'
 import AdminPage from '../pages/AdminPage.vue'
+import SearchPage from '../pages/SearchPage.vue'
 
 import { auth, db } from '../firebase'
 import { doc, getDoc } from 'firebase/firestore'
@@ -28,7 +29,9 @@ const routes = [
   { path: '/cart', name: 'cart', component: CartPage },
   { path: '/checkout', name: 'checkout', component: CheckoutPage },
   { path: '/auth', name: 'auth', component: AuthPage },
+  { path: '/search', name: 'search', component: SearchPage },
   { path: '/admin', name: 'admin', component: AdminPage, meta: { requiresAdmin: true } },
+
 ]
 
 const router = createRouter({

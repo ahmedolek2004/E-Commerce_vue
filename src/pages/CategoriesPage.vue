@@ -48,9 +48,9 @@ const categories = ref([
   },
   {
     id: "c3",
-    name: "Home & Kitchen",
+    name: "Home",
     description: "Furniture, appliances, and decor.",
-    image: "/images/Home & Garden.webp",
+    image: "/images/Home.webp",
   },
   {
     id: "c4",
@@ -60,15 +60,15 @@ const categories = ref([
   },
   {
     id: "c3",
-    name: "Sports & Outdoors",
+    name: "Sports",
     description: "sport.",
-    image: "/images/Toys & Games.webp",
+    image: "/images/Toy.webp",
   },
   {
     id: "c3",
-    name: "Toys & Games",
+    name: "Toys",
     description: "games.",
-    image: "/images/Sports & Outdoors.webp",
+    image: "/images/Sport.webp",
   },
 ])
 </script>
