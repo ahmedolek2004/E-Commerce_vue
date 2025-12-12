@@ -1,25 +1,45 @@
 <template>
   <div class="container py-5">
-
     <h2 class="mb-4">Admin Dashboard</h2>
 
     <!-- ✅ Tabs -->
     <ul class="nav nav-tabs mb-4">
       <li class="nav-item">
-        <button class="nav-link" :class="{ active: activeTab === 'users' }" @click="activeTab = 'users'">
+        <button
+          class="nav-link"
+          :class="{ active: activeTab === 'users' }"
+          @click="activeTab = 'users'"
+        >
           Users
         </button>
       </li>
 
       <li class="nav-item">
-        <button class="nav-link" :class="{ active: activeTab === 'products' }" @click="activeTab = 'products'">
+        <button
+          class="nav-link"
+          :class="{ active: activeTab === 'products' }"
+          @click="activeTab = 'products'"
+        >
           Products
         </button>
       </li>
 
       <li class="nav-item">
-        <button class="nav-link" :class="{ active: activeTab === 'categories' }" @click="activeTab = 'categories'">
+        <button
+          class="nav-link"
+          :class="{ active: activeTab === 'categories' }"
+          @click="activeTab = 'categories'"
+        >
           Categories
+        </button>
+      </li>
+      <li class="nav-item">
+        <button
+          class="nav-link"
+          :class="{ active: activeTab === 'deals' }"
+          @click="activeTab = 'deals'"
+        >
+          Deals
         </button>
       </li>
     </ul>
@@ -77,7 +97,6 @@
               </td>
             </tr>
           </tbody>
-
         </table>
       </div>
 
@@ -98,7 +117,6 @@
 
     <!-- ✅ PRODUCTS TAB -->
     <div v-if="activeTab === 'products'">
-
       <h4 class="mb-3">Add New Product</h4>
 
       <form @submit.prevent="addProduct" class="mb-4">
@@ -145,7 +163,6 @@
             </td>
           </tr>
         </tbody>
-
       </table>
 
       <div v-if="editingProduct" class="card p-3 mb-4 shadow-sm">
@@ -167,12 +184,10 @@
         <button class="btn btn-success me-2" @click="saveEdit">Save</button>
         <button class="btn btn-secondary" @click="cancelEdit">Cancel</button>
       </div>
-
     </div>
 
     <!-- ✅ CATEGORIES TAB -->
     <div v-if="activeTab === 'categories'">
-
       <h4 class="mb-3">Add New Category</h4>
 
       <form @submit.prevent="addCategory" class="mb-4">
@@ -201,12 +216,13 @@
             <td>{{ c.name }}</td>
             <td>{{ c.description }}</td>
             <td>
-              <button class="btn btn-warning btn-sm me-2" @click="startCategoryEdit(c)">Edit</button>
+              <button class="btn btn-warning btn-sm me-2" @click="startCategoryEdit(c)">
+                Edit
+              </button>
               <button class="btn btn-danger btn-sm" @click="deleteCategory(c.id)">Delete</button>
             </td>
           </tr>
         </tbody>
-
       </table>
 
       <div v-if="editingCategory" class="card p-3 mb-4 shadow-sm">
@@ -219,15 +235,117 @@
         <button class="btn btn-success me-2" @click="saveCategoryEdit">Save</button>
         <button class="btn btn-secondary" @click="cancelCategoryEdit">Cancel</button>
       </div>
-
     </div>
+    <!-- ✅ DEALS TAB -->
+    <div v-if="activeTab === 'deals'">
+      <h4 class="mb-3">Add New Deal</h4>
 
+      <form @submit.prevent="addDeal" class="mb-4">
+        <input v-model="dTitle" class="form-control mb-2" placeholder="Deal Title" />
+        <input v-model="dDesc" class="form-control mb-2" placeholder="Description" />
+
+        <!-- ✅ Dropdown لاختيار المنتج -->
+        <select v-model="dProductId" class="form-select mb-2">
+          <option disabled value="">Select Product</option>
+          <option v-for="p in products" :key="p.id" :value="p.id">
+            {{ p.title }}
+          </option>
+        </select>
+
+        <input
+          v-model="dOriginalPrice"
+          class="form-control mb-2"
+          placeholder="Original Price"
+          type="number"
+        />
+        <input
+          v-model="dDiscountPrice"
+          class="form-control mb-2"
+          placeholder="Discount Price"
+          type="number"
+        />
+        <input
+          v-model="dValidUntil"
+          class="form-control mb-2"
+          placeholder="Valid Until (e.g. 31 Dec 2025)"
+        />
+        <input v-model="dImage" class="form-control mb-2" placeholder="Image URL" />
+
+        <button class="btn btn-primary">Add Deal</button>
+      </form>
+
+      <h4 class="mb-3">All Deals</h4>
+
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Image</th>
+            <th>Title</th>
+            <th>Product</th>
+            <th>Prices</th>
+            <th>Valid Until</th>
+            <th style="min-width: 150px">Actions</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr v-for="d in deals" :key="d.id">
+            <td><img :src="d.image" width="60" /></td>
+            <td>{{ d.title }}</td>
+            <td>{{ getProductTitle(d.productId) }}</td>
+            <td>
+              <span class="text-danger fw-bold">${{ d.discountPrice }}</span>
+              <span class="text-muted text-decoration-line-through ms-2"
+                >${{ d.originalPrice }}</span
+              >
+            </td>
+            <td>{{ d.validUntil }}</td>
+            <td>
+              <button class="btn btn-warning btn-sm me-2" @click="startDealEdit(d)">Edit</button>
+              <button class="btn btn-danger btn-sm" @click="deleteDeal(d.id)">Delete</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- ✅ Edit Deal -->
+      <div v-if="editingDeal" class="card p-3 mb-4 shadow-sm">
+        <h5>Edit Deal</h5>
+
+        <input v-model="editDTitle" class="form-control mb-2" placeholder="Title" />
+        <input v-model="editDDesc" class="form-control mb-2" placeholder="Description" />
+
+        <select v-model="editDProductId" class="form-select mb-2">
+          <option v-for="p in products" :key="p.id" :value="p.id">
+            {{ p.title }}
+          </option>
+        </select>
+
+        <input
+          v-model="editDOriginalPrice"
+          class="form-control mb-2"
+          placeholder="Original Price"
+          type="number"
+        />
+        <input
+          v-model="editDDiscountPrice"
+          class="form-control mb-2"
+          placeholder="Discount Price"
+          type="number"
+        />
+        <input v-model="editDValidUntil" class="form-control mb-2" placeholder="Valid Until" />
+        <input v-model="editDImage" class="form-control mb-2" placeholder="Image URL" />
+
+        <button class="btn btn-success me-2" @click="saveDealEdit">Save</button>
+        <button class="btn btn-secondary" @click="cancelDealEdit">Cancel</button>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue"
-import { db } from "../firebase"
+import { ref, onMounted } from "vue";
+import { db } from "../firebase";
 import {
   collection,
   addDoc,
@@ -235,91 +353,91 @@ import {
   updateDoc,
   deleteDoc,
   doc,
-  serverTimestamp
-} from "firebase/firestore"
+  serverTimestamp,
+} from "firebase/firestore";
 
-const activeTab = ref("users")
+const activeTab = ref("users");
 
 /* ✅ USERS */
-const users = ref([])
-const newName = ref("")
-const newEmail = ref("")
-const newRole = ref("user")
-const errorMsg = ref("")
-const successMsg = ref("")
+const users = ref([]);
+const newName = ref("");
+const newEmail = ref("");
+const newRole = ref("user");
+const errorMsg = ref("");
+const successMsg = ref("");
 
-const editingUser = ref(null)
-const editUserName = ref("")
-const editUserEmail = ref("")
-const editUserRole = ref("user")
+const editingUser = ref(null);
+const editUserName = ref("");
+const editUserEmail = ref("");
+const editUserRole = ref("user");
 
 const startUserEdit = (user) => {
-  editingUser.value = user.id
-  editUserName.value = user.name || ""
-  editUserEmail.value = user.email || ""
-  editUserRole.value = user.role || "user"
-}
+  editingUser.value = user.id;
+  editUserName.value = user.name || "";
+  editUserEmail.value = user.email || "";
+  editUserRole.value = user.role || "user";
+};
 
 const saveUserEdit = async () => {
   await updateDoc(doc(db, "users", editingUser.value), {
     name: editUserName.value,
     email: editUserEmail.value,
-    role: editUserRole.value
-  })
+    role: editUserRole.value,
+  });
 
-  editingUser.value = null
-}
+  editingUser.value = null;
+};
 
 const cancelUserEdit = () => {
-  editingUser.value = null
-}
+  editingUser.value = null;
+};
 
 const fetchUsers = () => {
-  onSnapshot(collection(db, "users"), snap => {
-    users.value = snap.docs.map(d => ({ id: d.id, ...d.data() }))
-  })
-}
+  onSnapshot(collection(db, "users"), (snap) => {
+    users.value = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+  });
+};
 
 const addUser = async () => {
   if (!newName.value || !newEmail.value) {
-    errorMsg.value = "Please fill all fields"
-    return
+    errorMsg.value = "Please fill all fields";
+    return;
   }
 
   await addDoc(collection(db, "users"), {
     name: newName.value,
     email: newEmail.value,
     role: newRole.value,
-    createdAt: serverTimestamp()
-  })
+    createdAt: serverTimestamp(),
+  });
 
-  newName.value = ""
-  newEmail.value = ""
-  newRole.value = "user"
-  successMsg.value = "User added"
-}
+  newName.value = "";
+  newEmail.value = "";
+  newRole.value = "user";
+  successMsg.value = "User added";
+};
 
 const removeUser = async (id) => {
-  await deleteDoc(doc(db, "users", id))
-}
+  await deleteDoc(doc(db, "users", id));
+};
 
 /* ✅ PRODUCTS */
-const products = ref([])
+const products = ref([]);
 
-const pTitle = ref("")
-const pPrice = ref("")
-const pCategory = ref("")   // ✅ Dropdown value = categoryId
-const pImg = ref("")
-const pDesc = ref("")
+const pTitle = ref("");
+const pPrice = ref("");
+const pCategory = ref(""); // ✅ Dropdown value = categoryId
+const pImg = ref("");
+const pDesc = ref("");
 
 const fetchProducts = () => {
-  onSnapshot(collection(db, "products"), snap => {
-    products.value = snap.docs.map(d => ({ id: d.id, ...d.data() }))
-  })
-}
+  onSnapshot(collection(db, "products"), (snap) => {
+    products.value = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+  });
+};
 
 const addProduct = async () => {
-  const selectedCategory = categories.value.find(c => c.id === pCategory.value)
+  const selectedCategory = categories.value.find((c) => c.id === pCategory.value);
 
   await addDoc(collection(db, "products"), {
     title: pTitle.value,
@@ -328,36 +446,36 @@ const addProduct = async () => {
     categoryName: selectedCategory?.name || "",
     img: pImg.value,
     desc: pDesc.value,
-    createdAt: serverTimestamp()
-  })
+    createdAt: serverTimestamp(),
+  });
 
-  pTitle.value = ""
-  pPrice.value = ""
-  pCategory.value = ""
-  pImg.value = ""
-  pDesc.value = ""
-}
+  pTitle.value = "";
+  pPrice.value = "";
+  pCategory.value = "";
+  pImg.value = "";
+  pDesc.value = "";
+};
 
 /* ✅ Edit Product */
-const editingProduct = ref(null)
+const editingProduct = ref(null);
 
-const editTitle = ref("")
-const editPrice = ref("")
-const editCategory = ref("")   // ✅ Dropdown
-const editImg = ref("")
-const editDesc = ref("")
+const editTitle = ref("");
+const editPrice = ref("");
+const editCategory = ref(""); // ✅ Dropdown
+const editImg = ref("");
+const editDesc = ref("");
 
 const startEdit = (product) => {
-  editingProduct.value = product.id
-  editTitle.value = product.title
-  editPrice.value = product.price
-  editCategory.value = product.categoryId
-  editImg.value = product.img
-  editDesc.value = product.desc
-}
+  editingProduct.value = product.id;
+  editTitle.value = product.title;
+  editPrice.value = product.price;
+  editCategory.value = product.categoryId;
+  editImg.value = product.img;
+  editDesc.value = product.desc;
+};
 
 const saveEdit = async () => {
-  const selectedCategory = categories.value.find(c => c.id === editCategory.value)
+  const selectedCategory = categories.value.find((c) => c.id === editCategory.value);
 
   await updateDoc(doc(db, "products", editingProduct.value), {
     title: editTitle.value,
@@ -366,85 +484,170 @@ const saveEdit = async () => {
     categoryName: selectedCategory?.name || "",
     img: editImg.value,
     desc: editDesc.value,
-  })
+  });
 
-  editingProduct.value = null
-}
+  editingProduct.value = null;
+};
 
 const cancelEdit = () => {
-  editingProduct.value = null
-}
+  editingProduct.value = null;
+};
 
 const deleteProduct = async (id) => {
-  await deleteDoc(doc(db, "products", id))
-}
-
+  await deleteDoc(doc(db, "products", id));
+};
 
 /* ✅ CATEGORIES */
-const categories = ref([])
+const categories = ref([]);
 
-const cName = ref("")
-const cDesc = ref("")
-const cImg = ref("")
+const cName = ref("");
+const cDesc = ref("");
+const cImg = ref("");
 
 const fetchCategories = () => {
-  onSnapshot(collection(db, "categories"), snap => {
-    categories.value = snap.docs.map(d => ({ id: d.id, ...d.data() }))
-  })
-}
+  onSnapshot(collection(db, "categories"), (snap) => {
+    categories.value = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+  });
+};
 
 const addCategory = async () => {
   await addDoc(collection(db, "categories"), {
     name: cName.value,
     description: cDesc.value,
     image: cImg.value,
-    createdAt: serverTimestamp()
-  })
+    createdAt: serverTimestamp(),
+  });
 
-  cName.value = ""
-  cDesc.value = ""
-  cImg.value = ""
-}
+  cName.value = "";
+  cDesc.value = "";
+  cImg.value = "";
+};
 
-const editingCategory = ref(null)
+const editingCategory = ref(null);
 
-const editCName = ref("")
-const editCDesc = ref("")
-const editCImg = ref("")
+const editCName = ref("");
+const editCDesc = ref("");
+const editCImg = ref("");
 
 const startCategoryEdit = (cat) => {
-  editingCategory.value = cat.id
-  editCName.value = cat.name
-  editCDesc.value = cat.description
-  editCImg.value = cat.image
-}
+  editingCategory.value = cat.id;
+  editCName.value = cat.name;
+  editCDesc.value = cat.description;
+  editCImg.value = cat.image;
+};
 
 const saveCategoryEdit = async () => {
   await updateDoc(doc(db, "categories", editingCategory.value), {
     name: editCName.value,
     description: editCDesc.value,
-    image: editCImg.value
-  })
+    image: editCImg.value,
+  });
 
-  editingCategory.value = null
-}
+  editingCategory.value = null;
+};
 
 const cancelCategoryEdit = () => {
-  editingCategory.value = null
-}
+  editingCategory.value = null;
+};
 
 const deleteCategory = async (id) => {
-  await deleteDoc(doc(db, "categories", id))
-}
+  await deleteDoc(doc(db, "categories", id));
+};
+/* ✅ DEALS */
+const deals = ref([]);
+
+const dTitle = ref("");
+const dDesc = ref("");
+const dProductId = ref("");
+const dOriginalPrice = ref("");
+const dDiscountPrice = ref("");
+const dValidUntil = ref("");
+const dImage = ref("");
+
+const fetchDeals = () => {
+  onSnapshot(collection(db, "deals"), (snap) => {
+    deals.value = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+  });
+};
+
+const addDeal = async () => {
+  await addDoc(collection(db, "deals"), {
+    title: dTitle.value,
+    description: dDesc.value,
+    productId: dProductId.value,
+    originalPrice: Number(dOriginalPrice.value),
+    discountPrice: Number(dDiscountPrice.value),
+    validUntil: dValidUntil.value,
+    image: dImage.value,
+    createdAt: serverTimestamp(),
+  });
+
+  dTitle.value = "";
+  dDesc.value = "";
+  dProductId.value = "";
+  dOriginalPrice.value = "";
+  dDiscountPrice.value = "";
+  dValidUntil.value = "";
+  dImage.value = "";
+};
+
+const editingDeal = ref(null);
+
+const editDTitle = ref("");
+const editDDesc = ref("");
+const editDProductId = ref("");
+const editDOriginalPrice = ref("");
+const editDDiscountPrice = ref("");
+const editDValidUntil = ref("");
+const editDImage = ref("");
+
+const startDealEdit = (deal) => {
+  editingDeal.value = deal.id;
+  editDTitle.value = deal.title;
+  editDDesc.value = deal.description;
+  editDProductId.value = deal.productId;
+  editDOriginalPrice.value = deal.originalPrice;
+  editDDiscountPrice.value = deal.discountPrice;
+  editDValidUntil.value = deal.validUntil;
+  editDImage.value = deal.image;
+};
+
+const saveDealEdit = async () => {
+  await updateDoc(doc(db, "deals", editingDeal.value), {
+    title: editDTitle.value,
+    description: editDDesc.value,
+    productId: editDProductId.value,
+    originalPrice: Number(editDOriginalPrice.value),
+    discountPrice: Number(editDDiscountPrice.value),
+    validUntil: editDValidUntil.value,
+    image: editDImage.value,
+  });
+
+  editingDeal.value = null;
+};
+
+const cancelDealEdit = () => {
+  editingDeal.value = null;
+};
+
+const deleteDeal = async (id) => {
+  await deleteDoc(doc(db, "deals", id));
+};
+
+/* ✅ Helper: Get product title */
+const getProductTitle = (id) => {
+  const p = products.value.find((x) => x.id === id);
+  return p ? p.title : "Unknown";
+};
 
 /* ✅ Load Data */
 onMounted(() => {
-  fetchUsers()
-  fetchProducts()
-  fetchCategories()
-})
+  fetchUsers();
+  fetchProducts();
+  fetchCategories();
+  fetchDeals();
+});
 </script>
-
 
 <style scoped>
 /* ✅ تحسين شكل الجداول */
@@ -482,7 +685,9 @@ form button {
 }
 
 /* ✅ تحسين شكل العناوين */
-h2, h4, h5 {
+h2,
+h4,
+h5 {
   font-weight: 600;
   color: #333;
 }
@@ -559,6 +764,4 @@ h5 {
     font-size: 1rem;
   }
 }
-
-
 </style>

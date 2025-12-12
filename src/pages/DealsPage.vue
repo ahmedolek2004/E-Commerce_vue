@@ -16,8 +16,12 @@
             <h5 class="card-title">{{ deal.title }}</h5>
             <p class="card-text text-muted">{{ deal.description }}</p>
             <p>
-              <span class="text-danger fw-bold">{{ formatCurrency(deal.discountPrice) }}</span>
-              <span class="text-muted text-decoration-line-through ms-2">{{ formatCurrency(deal.originalPrice) }}</span>
+              <span class="text-danger fw-bold">
+                {{ formatCurrency(deal.discountPrice) }}
+              </span>
+              <span class="text-muted text-decoration-line-through ms-2">
+                {{ formatCurrency(deal.originalPrice) }}
+              </span>
             </p>
             <RouterLink
               :to="`/products/${deal.productId}`"
@@ -36,43 +40,28 @@
 </template>
 
 <script setup>
-import { ref } from "vue"
+import { ref, onMounted } from "vue"
 import { RouterLink } from "vue-router"
+import { db } from "../firebase"
+import { collection, onSnapshot } from "firebase/firestore"
 
-// بيانات تجريبية للعروض
-const deals = ref([
-  {
-    id: "d1",
-    productId: "p1",
-    title: "Smartphone Deal",
-    description: "Latest Android phone with 20% off.",
-    originalPrice: 299.99,
-    discountPrice: 239.99,
-    validUntil: "31 Dec 2025",
-    image: "/images/electronics.webp",
-  },
-  {
-    id: "d2",
-    productId: "p2",
-    title: "Laptop Discount",
-    description: "Save $200 on powerful laptops.",
-    originalPrice: 899.99,
-    discountPrice: 699.99,
-    validUntil: "15 Jan 2026",
-    image: "/images/electronics.webp",
-  },
-  {
-    id: "d3",
-    productId: "p3",
-    title: "Fashion Sale",
-    description: "Buy 2 get 1 free on T-Shirts.",
-    originalPrice: 19.99,
-    discountPrice: 13.33,
-    validUntil: "10 Jan 2026",
-    image: "/images/fashion.webp",
-  },
-])
+const deals = ref([])
 
-// تنسيق السعر
+onMounted(() => {
+  onSnapshot(collection(db, "deals"), (snapshot) => {
+    deals.value = snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }))
+  })
+})
+
 const formatCurrency = (value) => `$${value.toFixed(2)}`
 </script>
+
+<style scoped>
+.card-img-top {
+  height: 220px;
+  object-fit: cover;
+}
+</style>
