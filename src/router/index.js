@@ -1,54 +1,59 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import { auth, db } from '../firebase'
-import { doc, getDoc } from 'firebase/firestore'
+import { createRouter, createWebHistory } from "vue-router"
+import { auth, db } from "../firebase"
+import { doc, getDoc } from "firebase/firestore"
 
 const routes = [
-
   // ✅ Home
-  { path: '/', name: 'home', component: () => import('../pages/HomePage.vue') },
+  { path: "/", name: "home", component: () => import("../pages/HomePage.vue") },
 
   // ✅ Products
-  { path: '/products', name: 'products', component: () => import('../pages/ProductsPage.vue') },
-  { path: '/products/:id', name: 'product-details', component: () => import('../pages/ProductPage.vue') },
+  { path: "/products", name: "products", component: () => import("../pages/ProductsPage.vue") },
+  { path: "/products/:id", name: "product-details", component: () => import("../pages/ProductPage.vue") },
 
   // ✅ Categories
-  { path: '/categories', name: 'categories', component: () => import('../pages/CategoriesPage.vue') },
-  { path: '/categories/:id', name: 'category', component: () => import('../pages/CategoryPage.vue') },
+  { path: "/categories", name: "categories", component: () => import("../pages/CategoriesPage.vue") },
+  { path: "/categories/:id", name: "category", component: () => import("../pages/CategoryPage.vue") },
 
   // ✅ Deals
-  { path: '/deals', name: 'deals', component: () => import('../pages/DealsPage.vue') },
+  { path: "/deals", name: "deals", component: () => import("../pages/DealsPage.vue") },
 
   // ✅ Static Pages
-  { path: '/about', name: 'about', component: () => import('../pages/AboutPage.vue') },
-  { path: '/contact', name: 'contact', component: () => import('../pages/ContactPage.vue') },
+  { path: "/about", name: "about", component: () => import("../pages/AboutPage.vue") },
+  { path: "/contact", name: "contact", component: () => import("../pages/ContactPage.vue") },
 
   // ✅ Cart
-  { path: '/cart', name: 'cart', component: () => import('../pages/CartPage.vue') },
+  { path: "/cart", name: "cart", component: () => import("../pages/CartPage.vue") },
 
   // ✅ Checkout
-  { path: '/checkout', name: 'checkout', component: () => import('../pages/CheckoutPage.vue') },
+  { path: "/checkout", name: "checkout", component: () => import("../pages/CheckoutPage.vue") },
 
   // ✅ Auth
-  { path: '/auth', name: 'auth', component: () => import('../pages/AuthPage.vue') },
+  { path: "/auth", name: "auth", component: () => import("../pages/AuthPage.vue") },
 
   // ✅ Search
-  { path: '/search', name: 'search', component: () => import('../pages/SearchPage.vue') },
+  { path: "/search", name: "search", component: () => import("../pages/SearchPage.vue") },
 
   // ✅ Admin (Protected)
-  {
-    path: '/admin',
-    name: 'admin',
-    component: () => import('../pages/AdminPage.vue'),
-    meta: { requiresAdmin: true }
-  },
+{
+  path: "/admin",
+  component: () => import("../layouts/AdminLayoutPage.vue"),
+  meta: { requiresAdmin: true },
+  children: [
+  { path: "", component: () => import("../Admin/Tabs/AdminDashboard.vue") },
+  { path: "users", component: () => import("../Admin/Tabs/AdminUsers.vue") },
+  { path: "products", component: () => import("../Admin/Tabs/AdminProducts.vue") },
+  { path: "categories", component: () => import("../Admin/Tabs/AdminCategories.vue") },
+  { path: "deals", component: () => import("../Admin/Tabs/AdminDeals.vue") },
+],
+}
+,
 
   // ✅ 404 Page
   {
-    path: '/:pathMatch(.*)*',
-    name: 'not-found',
-    component: () => import('../pages/NotFoundPage.vue')
+    path: "/:pathMatch(.*)*",
+    name: "not-found",
+    component: () => import("../pages/NotFoundPage.vue"),
   },
-
 ]
 
 const router = createRouter({
@@ -59,10 +64,13 @@ const router = createRouter({
 // ✅ Helper: Get current user
 function getCurrentUser() {
   return new Promise((resolve, reject) => {
-    const unsubscribe = auth.onAuthStateChanged(user => {
-      unsubscribe()
-      resolve(user)
-    }, reject)
+    const unsubscribe = auth.onAuthStateChanged(
+      (user) => {
+        unsubscribe()
+        resolve(user)
+      },
+      reject
+    )
   })
 }
 
@@ -79,11 +87,9 @@ router.beforeEach(async (to, from, next) => {
       } else {
         next("/") // ❌ Not admin → redirect home
       }
-
     } else {
       next("/auth") // ❌ Not logged in → redirect to login
     }
-
   } else {
     next() // ✅ Normal route
   }

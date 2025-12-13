@@ -1,21 +1,28 @@
 <template>
   <div class="d-flex justify-content-center align-items-center vh-100">
-    <div class="w-50">
+    <div class="auth-box">
+
       <h2 class="mb-4 text-center">Authentication</h2>
 
-      <!-- زر التبديل بين Login و Register -->
+      <!-- ✅ Switch Buttons -->
       <div class="mb-3 d-flex justify-content-center">
         <button class="btn btn-outline-primary me-2" @click="mode = 'login'">Login</button>
         <button class="btn btn-outline-success" @click="mode = 'register'">Register</button>
       </div>
 
-      <!-- Login Form -->
-      <div v-if="mode === 'login' && !currentUser" class="card mb-4 shadow-sm">
+      <!-- ✅ Loading -->
+      <div v-if="loading" class="text-center my-4">
+        <div class="spinner-border text-primary"></div>
+        <p class="mt-2">Loading...</p>
+      </div>
+
+      <!-- ✅ Login Form -->
+      <div v-if="mode === 'login' && !currentUser && !loading" class="card mb-4 shadow-sm">
         <div class="card-body">
           <h5 class="card-title text-center">Login</h5>
+
           <input v-model="loginEmail" type="email" class="form-control mb-2" placeholder="Email" />
 
-          <!-- Password with eye toggle -->
           <div class="input-group mb-2">
             <input
               v-model="loginPassword"
@@ -23,11 +30,7 @@
               class="form-control"
               placeholder="Password"
             />
-            <button
-              type="button"
-              class="btn btn-outline-secondary"
-              @click="showLoginPassword = !showLoginPassword"
-            >
+            <button class="btn btn-outline-secondary" @click="showLoginPassword = !showLoginPassword">
               <i :class="showLoginPassword ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
             </button>
           </div>
@@ -38,14 +41,14 @@
         </div>
       </div>
 
-      <!-- Register Form -->
-      <div v-if="mode === 'register' && !currentUser" class="card mb-4 shadow-sm">
+      <!-- ✅ Register Form -->
+      <div v-if="mode === 'register' && !currentUser && !loading" class="card mb-4 shadow-sm">
         <div class="card-body">
           <h5 class="card-title text-center">Register</h5>
+
           <input v-model="registerName" type="text" class="form-control mb-2" placeholder="Name" />
           <input v-model="registerEmail" type="email" class="form-control mb-2" placeholder="Email" />
 
-          <!-- Register Password -->
           <div class="input-group mb-2">
             <input
               v-model="registerPassword"
@@ -53,16 +56,11 @@
               class="form-control"
               placeholder="Password"
             />
-            <button
-              type="button"
-              class="btn btn-outline-secondary"
-              @click="showRegisterPassword = !showRegisterPassword"
-            >
+            <button class="btn btn-outline-secondary" @click="showRegisterPassword = !showRegisterPassword">
               <i :class="showRegisterPassword ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
             </button>
           </div>
 
-          <!-- Confirm Password -->
           <div class="input-group mb-2">
             <input
               v-model="confirmPassword"
@@ -70,11 +68,7 @@
               class="form-control"
               placeholder="Confirm Password"
             />
-            <button
-              type="button"
-              class="btn btn-outline-secondary"
-              @click="showConfirmPassword = !showConfirmPassword"
-            >
+            <button class="btn btn-outline-secondary" @click="showConfirmPassword = !showConfirmPassword">
               <i :class="showConfirmPassword ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
             </button>
           </div>
@@ -85,95 +79,140 @@
         </div>
       </div>
 
-      <!-- Logout -->
-      <div v-if="currentUser" class="card mb-4 shadow-sm">
+      <!-- ✅ Logout -->
+      <div v-if="currentUser && !loading" class="card mb-4 shadow-sm">
         <div class="card-body text-center">
           <h5 class="card-title">Logout</h5>
+          <p class="mb-2">Logged in as: {{ currentUser.email }}</p>
           <button @click="handleLogout" class="btn btn-danger">Logout</button>
         </div>
       </div>
 
-      <!-- Current User (Admin only) -->
-      <div v-if="isAdmin" class="card shadow-sm">
+      <!-- ✅ Admin Info -->
+      <div v-if="isAdmin && !loading" class="card shadow-sm">
         <div class="card-body text-center">
-          <h5 class="card-title">Current User</h5>
-          <p>👤 {{ currentUser.email }}</p>
+          <h5 class="card-title">Admin Access</h5>
+          <p>✅ You are an admin</p>
+          <button class="btn btn-dark" @click="router.push('/admin')">Go to Admin Panel</button>
         </div>
       </div>
+
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue"
-import { auth } from "../firebase"
+import { ref, onMounted, } from "vue"
+import { auth, db } from "../firebase"
 import { register, login, logout } from "../services/authService"
 import { onAuthStateChanged } from "firebase/auth"
+import { doc, getDoc } from "firebase/firestore"
 import { useRouter } from "vue-router"
 
 const router = useRouter()
-const mode = ref("login")
 
+// ✅ UI State
+const mode = ref("login")
+const loading = ref(true)
+
+// ✅ Form fields
 const registerName = ref("")
 const registerEmail = ref("")
 const registerPassword = ref("")
 const confirmPassword = ref("")
 const loginEmail = ref("")
 const loginPassword = ref("")
+
+// ✅ User state
 const currentUser = ref(null)
+const userRole = ref("user")
+
+// ✅ Derived state
 const isAdmin = ref(false)
 
-// متغيرات العين
+// ✅ Password visibility
 const showLoginPassword = ref(false)
 const showRegisterPassword = ref(false)
 const showConfirmPassword = ref(false)
 
-// تسجيل جديد
+// ✅ Load user role
+const loadUserRole = async (uid) => {
+  const snap = await getDoc(doc(db, "users", uid))
+  if (snap.exists()) {
+    userRole.value = snap.data().role
+    isAdmin.value = snap.data().role === "admin"
+  } else {
+    userRole.value = "user"
+    isAdmin.value = false
+  }
+}
+
+// ✅ Register
 const handleRegister = async () => {
   if (registerPassword.value !== confirmPassword.value) {
     alert("❌ Passwords do not match")
     return
   }
+
   try {
     await register(registerName.value, registerEmail.value, registerPassword.value)
     alert(`✅ Registered successfully! Welcome ${registerName.value}`)
-    router.push("/") // تحويل للـ Home بعد التسجيل
+    router.push("/")
   } catch (err) {
     alert("❌ " + err.message)
   }
 }
 
-// تسجيل دخول
+// ✅ Login
 const handleLogin = async () => {
   try {
-    await login(loginEmail.value, loginPassword.value)
+    const user = await login(loginEmail.value, loginPassword.value)
     alert("✅ Logged in successfully!")
-    router.push("/") // تحويل للـ Home بعد الدخول
+
+    await loadUserRole(user.uid)
+
+    if (isAdmin.value) {
+      router.push("/admin")
+    } else {
+      router.push("/")
+    }
+
   } catch (err) {
     alert("❌ " + err.message)
   }
 }
 
-// تسجيل خروج
+// ✅ Logout
 const handleLogout = async () => {
   try {
     await logout()
     alert("✅ Logged out successfully!")
-    router.push("/auth") // يرجع لصفحة الـ Auth بعد الخروج
+    router.push("/auth")
   } catch (err) {
     alert("❌ " + err.message)
   }
 }
 
-// متابعة المستخدم الحالي
+// ✅ Track user
 onMounted(() => {
-  onAuthStateChanged(auth, (user) => {
+  onAuthStateChanged(auth, async (user) => {
     currentUser.value = user
-    if (user && user.email === "admin@site.com") {
-      isAdmin.value = true
+
+    if (user) {
+      await loadUserRole(user.uid)
     } else {
       isAdmin.value = false
+      userRole.value = "user"
     }
+
+    loading.value = false
   })
 })
 </script>
+
+<style scoped>
+.auth-box {
+  width: 100%;
+  max-width: 480px;
+}
+</style>
