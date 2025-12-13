@@ -1,345 +1,439 @@
 <template>
-  <div class="container py-5">
-    <h2 class="mb-4">Admin Dashboard</h2>
+  <div class="container py-5 admin-wrapper">
+
+    <h2 class="mb-4 fw-bold">Admin Dashboard</h2>
 
     <!-- ✅ Tabs -->
-    <ul class="nav nav-tabs mb-4">
-      <li class="nav-item">
+    <ul class="nav nav-tabs mb-4 admin-tabs">
+      <li class="nav-item" v-for="tab in ['users','categories','products','deals']" :key="tab">
         <button
           class="nav-link"
-          :class="{ active: activeTab === 'users' }"
-          @click="activeTab = 'users'"
+          :class="{ active: activeTab === tab }"
+          @click="activeTab = tab"
         >
-          Users
-        </button>
-      </li>
-
-      <li class="nav-item">
-        <button
-          class="nav-link"
-          :class="{ active: activeTab === 'products' }"
-          @click="activeTab = 'products'"
-        >
-          Products
-        </button>
-      </li>
-
-      <li class="nav-item">
-        <button
-          class="nav-link"
-          :class="{ active: activeTab === 'categories' }"
-          @click="activeTab = 'categories'"
-        >
-          Categories
-        </button>
-      </li>
-      <li class="nav-item">
-        <button
-          class="nav-link"
-          :class="{ active: activeTab === 'deals' }"
-          @click="activeTab = 'deals'"
-        >
-          Deals
+          {{ tab.charAt(0).toUpperCase() + tab.slice(1) }}
         </button>
       </li>
     </ul>
 
     <!-- ✅ USERS TAB -->
     <div v-if="activeTab === 'users'">
-      <h4 class="mb-3">Add New User</h4>
+      <div class="card p-4 shadow-sm mb-4">
+        <h4 class="mb-3 fw-semibold">Add New User</h4>
 
-      <div class="row g-2 mb-4">
-        <div class="col-md-4">
-          <input v-model="newName" type="text" placeholder="Name" class="form-control" />
-        </div>
-        <div class="col-md-4">
-          <input v-model="newEmail" type="email" placeholder="Email" class="form-control" />
-        </div>
-        <div class="col-md-3">
-          <select v-model="newRole" class="form-select">
-            <option value="user">User</option>
-            <option value="admin">Admin</option>
-          </select>
-        </div>
-        <div class="col-md-1 d-grid">
-          <button @click="addUser" class="btn btn-primary">Add</button>
+        <form @submit.prevent="addUser">
+          <div class="row g-3">
+            <div class="col-md-4">
+              <input v-model="newName" class="form-control" placeholder="Name" />
+            </div>
+
+            <div class="col-md-4">
+              <input v-model="newEmail" class="form-control" placeholder="Email" />
+            </div>
+
+            <div class="col-md-3">
+              <select v-model="newRole" class="form-select">
+                <option value="user">User</option>
+                <option value="admin">Admin</option>
+              </select>
+            </div>
+
+            <div class="col-md-1 text-end">
+              <button class="btn btn-primary w-100">Add</button>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <!-- ✅ Users Table -->
+      <div class="card p-3 shadow-sm table-card">
+        <h4 class="mb-3 fw-semibold">All Users</h4>
+
+        <div class="table-responsive custom-scroll">
+          <table class="table table-striped table-hover align-middle">
+            <thead class="table-dark">
+              <tr>
+                <th>UID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th style="min-width: 200px">Actions</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr v-for="u in users" :key="u.id">
+                <td>{{ u.id }}</td>
+                <td>{{ u.name }}</td>
+                <td>{{ u.email }}</td>
+                <td>
+                  <span class="badge" :class="u.role === 'admin' ? 'bg-success' : 'bg-secondary'">
+                    {{ u.role }}
+                  </span>
+                </td>
+                <td>
+                  <button class="btn btn-warning btn-sm me-2" @click="startUserEdit(u)">Edit</button>
+                  <button class="btn btn-danger btn-sm" @click="removeUser(u.id)">Delete</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
 
-      <p v-if="errorMsg" class="text-danger">{{ errorMsg }}</p>
-      <p v-if="successMsg" class="text-success">{{ successMsg }}</p>
+      <!-- ✅ Edit User -->
+      <div v-if="editingUser" class="card p-4 shadow-sm mt-4">
+        <h5 class="fw-semibold mb-3">Edit User</h5>
 
-      <div v-if="users.length > 0" class="table-responsive">
-        <table class="table table-striped align-middle">
-          <thead class="table-dark">
-            <tr>
-              <th>UID</th>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Role</th>
-              <th style="min-width: 200px">Actions</th>
-            </tr>
-          </thead>
+        <div class="row g-3">
+          <div class="col-md-4">
+            <input v-model="editUserName" class="form-control" placeholder="Name" />
+          </div>
 
-          <tbody>
-            <tr v-for="u in users" :key="u.id">
-              <td>{{ u.id }}</td>
-              <td>{{ u.name }}</td>
-              <td>{{ u.email }}</td>
-              <td>
-                <span class="badge" :class="u.role === 'admin' ? 'bg-success' : 'bg-secondary'">
-                  {{ u.role }}
-                </span>
-              </td>
-              <td>
-                <button class="btn btn-warning btn-sm me-2" @click="startUserEdit(u)">Edit</button>
-                <button @click="removeUser(u.id)" class="btn btn-danger btn-sm">Delete</button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+          <div class="col-md-4">
+            <input v-model="editUserEmail" class="form-control" placeholder="Email" />
+          </div>
 
-      <div v-if="editingUser" class="card p-3 mb-4 shadow-sm">
-        <h5>Edit User</h5>
+          <div class="col-md-3">
+            <select v-model="editUserRole" class="form-select">
+              <option value="user">User</option>
+              <option value="admin">Admin</option>
+            </select>
+          </div>
 
-        <input v-model="editUserName" class="form-control mb-2" placeholder="Name" />
-        <input v-model="editUserEmail" class="form-control mb-2" placeholder="Email" />
-        <select v-model="editUserRole" class="form-select mb-2">
-          <option value="user">User</option>
-          <option value="admin">Admin</option>
-        </select>
-
-        <button class="btn btn-success me-2" @click="saveUserEdit">Save</button>
-        <button class="btn btn-secondary" @click="cancelUserEdit">Cancel</button>
+          <div class="col-md-12 text-end">
+            <button class="btn btn-success me-2 px-4" @click="saveUserEdit">Save</button>
+            <button class="btn btn-secondary px-4" @click="cancelUserEdit">Cancel</button>
+          </div>
+        </div>
       </div>
     </div>
 
     <!-- ✅ PRODUCTS TAB -->
     <div v-if="activeTab === 'products'">
-      <h4 class="mb-3">Add New Product</h4>
+      <div class="card p-4 shadow-sm mb-4">
+        <h4 class="fw-semibold mb-3">Add New Product</h4>
 
-      <form @submit.prevent="addProduct" class="mb-4">
-        <input v-model="pTitle" class="form-control mb-2" placeholder="Title" />
-        <input v-model="pPrice" class="form-control mb-2" placeholder="Price" type="number" />
+        <form @submit.prevent="addProduct">
+          <div class="row g-3">
 
-        <!-- ✅ Dropdown for categories -->
-        <select v-model="pCategory" class="form-select mb-2">
-          <option disabled value="">Select Category</option>
-          <option v-for="c in categories" :key="c.id" :value="c.id">
-            {{ c.name }}
-          </option>
-        </select>
+            <div class="col-md-6">
+              <input v-model="pTitle" class="form-control" placeholder="Title" />
+            </div>
 
-        <input v-model="pImg" class="form-control mb-2" placeholder="Image URL" />
-        <textarea v-model="pDesc" class="form-control mb-2" placeholder="Description"></textarea>
+            <div class="col-md-6">
+              <input v-model="pPrice" class="form-control" placeholder="Price" type="number" />
+            </div>
 
-        <button class="btn btn-primary">Add Product</button>
-      </form>
+            <div class="col-md-6">
+              <select v-model="pCategory" class="form-select">
+                <option disabled value="">Select Category</option>
+                <option v-for="c in categories" :key="c.id" :value="c.id">
+                  {{ c.name }}
+                </option>
+              </select>
+            </div>
 
-      <h4 class="mb-3">All Products</h4>
+            <div class="col-md-6">
+              <input v-model="pImg" class="form-control" placeholder="Image URL" />
+            </div>
 
-      <table class="table table-striped">
-        <thead>
-          <tr>
-            <th>Image</th>
-            <th>Title</th>
-            <th>Price</th>
-            <th>Category</th>
-            <th style="min-width: 150px">Actions</th>
-          </tr>
-        </thead>
+            <div class="col-12">
+              <textarea v-model="pDesc" class="form-control" placeholder="Description"></textarea>
+            </div>
 
-        <tbody>
-          <tr v-for="p in products" :key="p.id">
-            <td><img :src="p.img" width="60" /></td>
-            <td>{{ p.title }}</td>
-            <td>{{ p.price }}</td>
-            <td>{{ p.categoryName }}</td>
+            <div class="col-12 text-end">
+              <button class="btn btn-primary px-4">Add Product</button>
+            </div>
 
-            <td>
-              <button class="btn btn-warning btn-sm me-2" @click="startEdit(p)">Edit</button>
-              <button class="btn btn-danger btn-sm" @click="deleteProduct(p.id)">Delete</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+          </div>
+        </form>
+      </div>
 
-      <div v-if="editingProduct" class="card p-3 mb-4 shadow-sm">
-        <h5>Edit Product</h5>
+      <!-- ✅ Products Table -->
+      <div class="card p-3 shadow-sm table-card">
+        <h4 class="fw-semibold mb-3">All Products</h4>
 
-        <input v-model="editTitle" class="form-control mb-2" placeholder="Title" />
-        <input v-model="editPrice" class="form-control mb-2" placeholder="Price" type="number" />
+        <div class="table-responsive custom-scroll">
+          <table class="table table-striped table-hover align-middle">
+            <thead class="table-dark">
+              <tr>
+                <th>Image</th>
+                <th>Title</th>
+                <th>Price</th>
+                <th>Category</th>
+                <th style="min-width: 150px">Actions</th>
+              </tr>
+            </thead>
 
-        <!-- ✅ Dropdown for editing -->
-        <select v-model="editCategory" class="form-select mb-2">
-          <option v-for="c in categories" :key="c.id" :value="c.id">
-            {{ c.name }}
-          </option>
-        </select>
+            <tbody>
+              <tr v-for="p in products" :key="p.id">
+                <td><img :src="p.img" width="60" class="rounded" /></td>
+                <td>{{ p.title }}</td>
+                <td>{{ p.price }}</td>
+                <td>{{ p.categoryName }}</td>
 
-        <input v-model="editImg" class="form-control mb-2" placeholder="Image URL" />
-        <textarea v-model="editDesc" class="form-control mb-2" placeholder="Description"></textarea>
+                <td>
+                  <button class="btn btn-warning btn-sm me-2" @click="startEdit(p)">Edit</button>
+                  <button class="btn btn-danger btn-sm" @click="deleteProduct(p.id)">Delete</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
 
-        <button class="btn btn-success me-2" @click="saveEdit">Save</button>
-        <button class="btn btn-secondary" @click="cancelEdit">Cancel</button>
+      <!-- ✅ Edit Product -->
+      <div v-if="editingProduct" class="card p-4 shadow-sm mt-4">
+        <h5 class="fw-semibold mb-3">Edit Product</h5>
+
+        <div class="row g-3">
+          <div class="col-md-6">
+            <input v-model="editTitle" class="form-control" placeholder="Title" />
+          </div>
+
+          <div class="col-md-6">
+            <input v-model="editPrice" class="form-control" placeholder="Price" type="number" />
+          </div>
+
+          <div class="col-md-6">
+            <select v-model="editCategory" class="form-select">
+              <option v-for="c in categories" :key="c.id" :value="c.id">
+                {{ c.name }}
+              </option>
+            </select>
+          </div>
+
+          <div class="col-md-6">
+            <input v-model="editImg" class="form-control" placeholder="Image URL" />
+          </div>
+
+          <div class="col-12">
+            <textarea v-model="editDesc" class="form-control" placeholder="Description"></textarea>
+          </div>
+
+          <div class="col-12 text-end">
+            <button class="btn btn-success me-2 px-4" @click="saveEdit">Save</button>
+            <button class="btn btn-secondary px-4" @click="cancelEdit">Cancel</button>
+          </div>
+        </div>
       </div>
     </div>
 
     <!-- ✅ CATEGORIES TAB -->
     <div v-if="activeTab === 'categories'">
-      <h4 class="mb-3">Add New Category</h4>
+      <div class="card p-4 shadow-sm mb-4">
+        <h4 class="fw-semibold mb-3">Add New Category</h4>
 
-      <form @submit.prevent="addCategory" class="mb-4">
-        <input v-model="cName" class="form-control mb-2" placeholder="Category Name" />
-        <input v-model="cDesc" class="form-control mb-2" placeholder="Description" />
-        <input v-model="cImg" class="form-control mb-2" placeholder="Image URL" />
+        <form @submit.prevent="addCategory">
+          <div class="row g-3">
 
-        <button class="btn btn-primary">Add Category</button>
-      </form>
+            <div class="col-md-6">
+              <input v-model="cName" class="form-control" placeholder="Category Name" />
+            </div>
 
-      <h4 class="mb-3">All Categories</h4>
+            <div class="col-md-6">
+              <input v-model="cDesc" class="form-control" placeholder="Description" />
+            </div>
 
-      <table class="table table-striped">
-        <thead>
-          <tr>
-            <th>Image</th>
-            <th>Name</th>
-            <th>Description</th>
-            <th style="min-width: 150px">Actions</th>
-          </tr>
-        </thead>
+            <div class="col-12">
+              <input v-model="cImg" class="form-control" placeholder="Image URL" />
+            </div>
 
-        <tbody>
-          <tr v-for="c in categories" :key="c.id">
-            <td><img :src="c.image" width="60" /></td>
-            <td>{{ c.name }}</td>
-            <td>{{ c.description }}</td>
-            <td>
-              <button class="btn btn-warning btn-sm me-2" @click="startCategoryEdit(c)">
-                Edit
-              </button>
-              <button class="btn btn-danger btn-sm" @click="deleteCategory(c.id)">Delete</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+            <div class="col-12 text-end">
+              <button class="btn btn-primary px-4">Add Category</button>
+            </div>
 
-      <div v-if="editingCategory" class="card p-3 mb-4 shadow-sm">
-        <h5>Edit Category</h5>
+          </div>
+        </form>
+      </div>
 
-        <input v-model="editCName" class="form-control mb-2" placeholder="Name" />
-        <input v-model="editCDesc" class="form-control mb-2" placeholder="Description" />
-        <input v-model="editCImg" class="form-control mb-2" placeholder="Image URL" />
+      <!-- ✅ Categories Table -->
+      <div class="card p-3 shadow-sm table-card">
+        <h4 class="fw-semibold mb-3">All Categories</h4>
 
-        <button class="btn btn-success me-2" @click="saveCategoryEdit">Save</button>
-        <button class="btn btn-secondary" @click="cancelCategoryEdit">Cancel</button>
+        <div class="table-responsive custom-scroll">
+          <table class="table table-striped table-hover align-middle">
+            <thead class="table-dark">
+              <tr>
+                <th>Image</th>
+                <th>Name</th>
+                <th>Description</th>
+                <th style="min-width: 150px">Actions</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr v-for="c in categories" :key="c.id">
+                <td><img :src="c.image" width="60" class="rounded" /></td>
+                <td>{{ c.name }}</td>
+                <td>{{ c.description }}</td>
+                <td>
+                  <button class="btn btn-warning btn-sm me-2" @click="startCategoryEdit(c)">Edit</button>
+                  <button class="btn btn-danger btn-sm" @click="deleteCategory(c.id)">Delete</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ✅ Edit Category -->
+      <div v-if="editingCategory" class="card p-4 shadow-sm mt-4">
+        <h5 class="fw-semibold mb-3">Edit Category</h5>
+
+        <div class="row g-3">
+          <div class="col-md-6">
+            <input v-model="editCName" class="form-control" placeholder="Name" />
+          </div>
+
+          <div class="col-md-6">
+            <input v-model="editCDesc" class="form-control" placeholder="Description" />
+          </div>
+
+          <div class="col-12">
+            <input v-model="editCImg" class="form-control" placeholder="Image URL" />
+          </div>
+
+          <div class="col-12 text-end">
+            <button class="btn btn-success me-2 px-4" @click="saveCategoryEdit">Save</button>
+            <button class="btn btn-secondary px-4" @click="cancelCategoryEdit">Cancel</button>
+          </div>
+        </div>
       </div>
     </div>
+
     <!-- ✅ DEALS TAB -->
     <div v-if="activeTab === 'deals'">
-      <h4 class="mb-3">Add New Deal</h4>
+      <div class="card p-4 shadow-sm mb-4">
+        <h4 class="fw-semibold mb-3">Add New Deal</h4>
 
-      <form @submit.prevent="addDeal" class="mb-4">
-        <input v-model="dTitle" class="form-control mb-2" placeholder="Deal Title" />
-        <input v-model="dDesc" class="form-control mb-2" placeholder="Description" />
+        <form @submit.prevent="addDeal">
+          <div class="row g-3">
 
-        <!-- ✅ Dropdown لاختيار المنتج -->
-        <select v-model="dProductId" class="form-select mb-2">
-          <option disabled value="">Select Product</option>
-          <option v-for="p in products" :key="p.id" :value="p.id">
-            {{ p.title }}
-          </option>
-        </select>
+            <div class="col-md-6">
+              <input v-model="dTitle" class="form-control" placeholder="Deal Title" />
+            </div>
 
-        <input
-          v-model="dOriginalPrice"
-          class="form-control mb-2"
-          placeholder="Original Price"
-          type="number"
-        />
-        <input
-          v-model="dDiscountPrice"
-          class="form-control mb-2"
-          placeholder="Discount Price"
-          type="number"
-        />
-        <input
-          v-model="dValidUntil"
-          class="form-control mb-2"
-          placeholder="Valid Until (e.g. 31 Dec 2025)"
-        />
-        <input v-model="dImage" class="form-control mb-2" placeholder="Image URL" />
+            <div class="col-md-6">
+              <input v-model="dDesc" class="form-control" placeholder="Description" />
+            </div>
 
-        <button class="btn btn-primary">Add Deal</button>
-      </form>
+            <div class="col-md-6">
+              <select v-model="dProductId" class="form-select">
+                <option disabled value="">Select Product</option>
+                <option v-for="p in products" :key="p.id" :value="p.id">
+                  {{ p.title }}
+                </option>
+              </select>
+            </div>
 
-      <h4 class="mb-3">All Deals</h4>
+            <div class="col-md-6">
+              <input v-model="dImage" class="form-control" placeholder="Image URL" />
+            </div>
 
-      <table class="table table-striped">
-        <thead>
-          <tr>
-            <th>Image</th>
-            <th>Title</th>
-            <th>Product</th>
-            <th>Prices</th>
-            <th>Valid Until</th>
-            <th style="min-width: 150px">Actions</th>
-          </tr>
-        </thead>
+            <div class="col-md-6">
+              <input v-model="dOriginalPrice" class="form-control" placeholder="Original Price" type="number" />
+            </div>
 
-        <tbody>
-          <tr v-for="d in deals" :key="d.id">
-            <td><img :src="d.image" width="60" /></td>
-            <td>{{ d.title }}</td>
-            <td>{{ getProductTitle(d.productId) }}</td>
-            <td>
-              <span class="text-danger fw-bold">${{ d.discountPrice }}</span>
-              <span class="text-muted text-decoration-line-through ms-2"
-                >${{ d.originalPrice }}</span
-              >
-            </td>
-            <td>{{ d.validUntil }}</td>
-            <td>
-              <button class="btn btn-warning btn-sm me-2" @click="startDealEdit(d)">Edit</button>
-              <button class="btn btn-danger btn-sm" @click="deleteDeal(d.id)">Delete</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+            <div class="col-md-6">
+              <input v-model="dDiscountPrice" class="form-control" placeholder="Discount Price" type="number" />
+            </div>
+
+            <div class="col-12">
+              <input v-model="dValidUntil" class="form-control" placeholder="Valid Until (e.g. 31 Dec 2025)" />
+            </div>
+
+            <div class="col-12 text-end">
+              <button class="btn btn-primary px-4">Add Deal</button>
+            </div>
+
+          </div>
+        </form>
+      </div>
+
+      <!-- ✅ Deals Table -->
+      <div class="card p-3 shadow-sm table-card">
+        <h4 class="fw-semibold mb-3">All Deals</h4>
+
+        <div class="table-responsive custom-scroll">
+          <table class="table table-striped table-hover align-middle">
+            <thead class="table-dark">
+              <tr>
+                <th>Image</th>
+                <th>Title</th>
+                <th>Product</th>
+                <th>Prices</th>
+                <th>Valid Until</th>
+                <th style="min-width: 150px">Actions</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr v-for="d in deals" :key="d.id">
+                <td><img :src="d.image" width="60" class="rounded" /></td>
+                <td>{{ d.title }}</td>
+                <td>{{ getProductTitle(d.productId) }}</td>
+                <td>
+                  <span class="text-danger fw-bold">${{ d.discountPrice }}</span>
+                  <span class="text-muted text-decoration-line-through ms-2">${{ d.originalPrice }}</span>
+                </td>
+                <td>{{ d.validUntil }}</td>
+                <td>
+                  <button class="btn btn-warning btn-sm me-2" @click="startDealEdit(d)">Edit</button>
+                  <button class="btn btn-danger btn-sm" @click="deleteDeal(d.id)">Delete</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
 
       <!-- ✅ Edit Deal -->
-      <div v-if="editingDeal" class="card p-3 mb-4 shadow-sm">
-        <h5>Edit Deal</h5>
+      <div v-if="editingDeal" class="card p-4 shadow-sm mt-4">
+        <h5 class="fw-semibold mb-3">Edit Deal</h5>
 
-        <input v-model="editDTitle" class="form-control mb-2" placeholder="Title" />
-        <input v-model="editDDesc" class="form-control mb-2" placeholder="Description" />
+        <div class="row g-3">
+          <div class="col-md-6">
+            <input v-model="editDTitle" class="form-control" placeholder="Title" />
+          </div>
 
-        <select v-model="editDProductId" class="form-select mb-2">
-          <option v-for="p in products" :key="p.id" :value="p.id">
-            {{ p.title }}
-          </option>
-        </select>
+          <div class="col-md-6">
+            <input v-model="editDDesc" class="form-control" placeholder="Description" />
+          </div>
 
-        <input
-          v-model="editDOriginalPrice"
-          class="form-control mb-2"
-          placeholder="Original Price"
-          type="number"
-        />
-        <input
-          v-model="editDDiscountPrice"
-          class="form-control mb-2"
-          placeholder="Discount Price"
-          type="number"
-        />
-        <input v-model="editDValidUntil" class="form-control mb-2" placeholder="Valid Until" />
-        <input v-model="editDImage" class="form-control mb-2" placeholder="Image URL" />
+          <div class="col-md-6">
+            <select v-model="editDProductId" class="form-select">
+              <option v-for="p in products" :key="p.id" :value="p.id">
+                {{ p.title }}
+              </option>
+            </select>
+          </div>
 
-        <button class="btn btn-success me-2" @click="saveDealEdit">Save</button>
-        <button class="btn btn-secondary" @click="cancelDealEdit">Cancel</button>
+          <div class="col-md-6">
+            <input v-model="editDImage" class="form-control" placeholder="Image URL" />
+          </div>
+
+          <div class="col-md-6">
+            <input v-model="editDOriginalPrice" class="form-control" placeholder="Original Price" type="number" />
+          </div>
+
+          <div class="col-md-6">
+            <input v-model="editDDiscountPrice" class="form-control" placeholder="Discount Price" type="number" />
+          </div>
+
+          <div class="col-12">
+            <input v-model="editDValidUntil" class="form-control" placeholder="Valid Until" />
+          </div>
+
+          <div class="col-12 text-end">
+            <button class="btn btn-success me-2 px-4" @click="saveDealEdit">Save</button>
+            <button class="btn btn-secondary px-4" @click="cancelDealEdit">Cancel</button>
+          </div>
+        </div>
       </div>
     </div>
+
   </div>
 </template>
 
@@ -649,119 +743,3 @@ onMounted(() => {
 });
 </script>
 
-<style scoped>
-/* ✅ تحسين شكل الجداول */
-.table td,
-.table th {
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  vertical-align: middle;
-}
-
-.table img {
-  border-radius: 8px;
-  box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
-}
-
-/* ✅ تحسين شكل الفورمات */
-form input,
-form textarea,
-form select {
-  font-size: 0.95rem;
-  border-radius: 8px;
-}
-
-form button {
-  font-size: 0.9rem;
-  border-radius: 6px;
-}
-
-/* ✅ تحسين شكل الكروت */
-.card {
-  border: 1px solid #dee2e6;
-  border-radius: 12px;
-  background-color: #f9f9f9;
-}
-
-/* ✅ تحسين شكل العناوين */
-h2,
-h4,
-h5 {
-  font-weight: 600;
-  color: #333;
-}
-
-h5 {
-  font-size: 1.2rem;
-}
-
-/* ✅ تحسين شكل الأزرار */
-.btn-sm {
-  font-size: 0.8rem;
-  padding: 4px 10px;
-}
-
-.btn-success {
-  background-color: #198754;
-  border-color: #198754;
-}
-
-.btn-warning {
-  background-color: #ffc107;
-  border-color: #ffc107;
-  color: #000;
-}
-
-.btn-danger {
-  background-color: #dc3545;
-  border-color: #dc3545;
-}
-
-.btn-secondary {
-  background-color: #6c757d;
-  border-color: #6c757d;
-}
-
-/* ✅ تحسين شكل التبويبات */
-.nav-tabs .nav-link {
-  font-weight: 500;
-  font-size: 0.95rem;
-  border-radius: 6px 6px 0 0;
-}
-
-.nav-tabs .nav-link.active {
-  background-color: #0d6efd;
-  color: #fff;
-}
-
-/* ✅ تحسين على الموبايل */
-@media (max-width: 768px) {
-  .table th:first-child,
-  .table td:first-child {
-    display: none;
-  }
-
-  form input,
-  form textarea,
-  form select {
-    font-size: 0.85rem;
-  }
-
-  .btn-sm {
-    font-size: 0.75rem;
-  }
-
-  h2 {
-    font-size: 1.5rem;
-  }
-
-  h4 {
-    font-size: 1.2rem;
-  }
-
-  h5 {
-    font-size: 1rem;
-  }
-}
-</style>

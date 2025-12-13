@@ -1,5 +1,17 @@
 <template>
   <div>
+    <!-- ✅ Hero Slider -->
+    <section class="hero-slider position-relative">
+      <div class="container py-5 text-center">
+        <h1 class="display-4 fw-bold text-dark">Welcome to Our Store</h1>
+        <p class="lead text-muted mb-4">
+          Discover amazing products, hot deals, and top categories.
+        </p>
+        <RouterLink to="/products" class="btn btn-primary btn-lg me-2"> Shop Now </RouterLink>
+        <RouterLink to="/deals" class="btn btn-outline-secondary btn-lg"> View Deals </RouterLink>
+      </div>
+    </section>
+
     <section class="slider-wrapper py-4">
       <div class="container">
         <div id="homeSlider" class="carousel slide custom-carousel" data-bs-ride="carousel">
@@ -43,18 +55,6 @@
             <span class="carousel-control-next-icon"></span>
           </button>
         </div>
-      </div>
-    </section>
-
-    <!-- ✅ Hero Slider -->
-    <section class="hero-slider position-relative">
-      <div class="container py-5 text-center">
-        <h1 class="display-4 fw-bold text-dark">Welcome to Our Store</h1>
-        <p class="lead text-muted mb-4">
-          Discover amazing products, hot deals, and top categories.
-        </p>
-        <RouterLink to="/products" class="btn btn-primary btn-lg me-2"> Shop Now </RouterLink>
-        <RouterLink to="/deals" class="btn btn-outline-secondary btn-lg"> View Deals </RouterLink>
       </div>
     </section>
 
@@ -156,7 +156,7 @@ const deals = [
 }
 
 .custom-carousel {
-  height: 40vh;
+  height: 60vh;
   position: relative;
 }
 

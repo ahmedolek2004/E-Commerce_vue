@@ -48,6 +48,21 @@
               <small>Deals</small>
             </RouterLink>
           </li>
+          
+          <li class="nav-item">
+            <RouterLink class="nav-link text-white text-center" to="/about">
+              <i class="bi bi-info-circle fs-5"></i><br />
+              <small>About</small>
+            </RouterLink>
+          </li>
+
+          <li class="nav-item">
+            <RouterLink class="nav-link text-white text-center" to="/contact">
+              <i class="bi bi-envelope fs-5"></i><br />
+              <small>Contact</small>
+            </RouterLink>
+          </li>
+
 
         </ul>
 
