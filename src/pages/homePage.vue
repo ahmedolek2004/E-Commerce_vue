@@ -139,7 +139,7 @@ const deals = [
 
 <style scoped>
 .hero-slider {
-  background: url("https://via.placeholder.com/1200x400") center/cover no-repeat;
+  background: url("#") center/cover no-repeat;
   color: white;
 }
 

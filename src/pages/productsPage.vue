@@ -2,12 +2,48 @@
   <div class="container py-5">
     <h1 class="mb-4">Our Products</h1>
 
-    <div v-if="products.length === 0" class="alert alert-info">
-      No products available.
+    <!-- ✅ Filters -->
+    <div class="card p-3 mb-4 shadow-sm">
+      <div class="row g-3">
+
+        <!-- Search by name -->
+        <div class="col-md-4">
+          <input v-model="searchName" class="form-control" placeholder="Search by name..." />
+        </div>
+
+        <!-- Price min -->
+        <div class="col-md-3">
+          <input v-model.number="minPrice" type="number" class="form-control" placeholder="Min price" />
+        </div>
+
+        <!-- Price max -->
+        <div class="col-md-3">
+          <input v-model.number="maxPrice" type="number" class="form-control" placeholder="Max price" />
+        </div>
+
+        <!-- Category -->
+        <div class="col-md-2">
+          <select v-model="selectedCategory" class="form-select">
+            <option value="">All Categories</option>
+            <option v-for="c in categories" :key="c" :value="c">{{ c }}</option>
+          </select>
+        </div>
+
+      </div>
+
+      <div class="text-end mt-3">
+        <button class="btn btn-secondary btn-sm" @click="resetFilters">Reset</button>
+      </div>
     </div>
 
+    <!-- ✅ No products -->
+    <div v-if="filteredProducts.length === 0" class="alert alert-info">
+      No products found.
+    </div>
+
+    <!-- ✅ Products -->
     <div class="row">
-      <div class="col-md-4 mb-4" v-for="p in products" :key="p.id">
+     <div class="col-12 col-sm-6 col-md-6 col-lg-4 col-xl-3 mb-4" v-for="p in products" :key="p.id">
         <div class="card h-100 shadow-sm">
           <img :src="p.img" class="card-img-top" />
 
@@ -23,30 +59,88 @@
         </div>
       </div>
     </div>
+
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue"
+import { ref, computed, onMounted } from "vue"
 import { RouterLink } from "vue-router"
 import { db } from "../firebase"
 import { collection, onSnapshot } from "firebase/firestore"
 
 const products = ref([])
 
+// ✅ Filters
+const searchName = ref("")
+const minPrice = ref("")
+const maxPrice = ref("")
+const selectedCategory = ref("")
+
+// ✅ Extract categories dynamically
+const categories = ref([])
+
 onMounted(() => {
   onSnapshot(collection(db, "products"), (snapshot) => {
-    products.value = snapshot.docs.map(doc => ({
+    const data = snapshot.docs.map(doc => ({
       id: doc.id,
       ...doc.data()
     }))
+
+    products.value = data
+
+    // ✅ Get unique categories
+    categories.value = [...new Set(data.map(p => p.categoryName))]
   })
 })
+
+// ✅ Computed filtered products
+const filteredProducts = computed(() => {
+  return products.value.filter(p => {
+
+    // Filter by name
+    if (searchName.value && !p.title.toLowerCase().includes(searchName.value.toLowerCase())) {
+      return false
+    }
+
+    // Filter by min price
+    if (minPrice.value && p.price < minPrice.value) {
+      return false
+    }
+
+    // Filter by max price
+    if (maxPrice.value && p.price > maxPrice.value) {
+      return false
+    }
+
+    // Filter by category
+    if (selectedCategory.value && p.categoryName !== selectedCategory.value) {
+      return false
+    }
+
+    return true
+  })
+})
+
+// ✅ Reset filters
+const resetFilters = () => {
+  searchName.value = ""
+  minPrice.value = ""
+  maxPrice.value = ""
+  selectedCategory.value = ""
+}
+
 </script>
 
 <style scoped>
-.card-img-top {
-  height: 240px;
-  object-fit: cover;
+  .product-card {
+  transition: 0.3s ease;
+  cursor: pointer;
 }
+
+.product-card:hover {
+  transform: translateY(-8px) scale(1.03);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+}
+
 </style>

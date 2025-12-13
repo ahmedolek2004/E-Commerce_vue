@@ -11,4 +11,4 @@ createApp(App)
   .use(pinia)
   .mount('#app')
 
-createApp(App).use(router).mount('#app')
+

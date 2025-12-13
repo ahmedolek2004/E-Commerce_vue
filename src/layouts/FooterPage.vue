@@ -3,7 +3,7 @@
     <div class="container">
       <div class="row">
         <div class="col-md-4 mb-4 mb-md-0">
-          <h5 class="fw-bold mb-3"><i class="bi bi-shop me-2"></i>Vue Store</h5>
+          <h5 class="fw-bold mb-3"><i class="bi bi-shop me-2"></i>Store </h5>
           <p class="text-">
             Your one-stop destination for quality products at unbeatable prices. Shop with
             confidence and enjoy fast delivery.
@@ -33,8 +33,8 @@
             <li>
               <RouterLink to="/contact" class="text- text-decoration-none">Contact</RouterLink>
             </li>
-            <li><a href="#" class="text- text-decoration-none">FAQ</a></li>
             <li><a href="#" class="text- text-decoration-none">Shipping</a></li>
+            <li><a href="#" class="text- text-decoration-none">FAQ</a></li>
           </ul>
         </div>
         <div class="col-md-4">
