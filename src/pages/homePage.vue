@@ -100,8 +100,6 @@
 
 <script setup>
 import { RouterLink } from "vue-router";
-
-
 const featured = [
   { title: "Smart Watch", desc: "Latest model 2024", img: "/images/1.webp" },
   { title: "Headphones", desc: "Noise cancelling", img: "/images/1.webp" },

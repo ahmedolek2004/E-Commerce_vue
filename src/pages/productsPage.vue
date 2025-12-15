@@ -88,9 +88,6 @@ const filteredProducts = computed(() => {
     return true
   })
 })
-
-
-
 </script>
 
 <style scoped>
