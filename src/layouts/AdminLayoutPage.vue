@@ -1,16 +1,16 @@
 <template>
   <div class="admin-layout">
 
-    <!-- ✅ زرار فتح السايدبار في الموبايل -->
+    <!--  زرار فتح السايدبار في الموبايل -->
     <button class="sidebar-toggle d-lg-none" @click="toggleSidebar">
-      ☰ 
+      ☰
     </button>
 
     <div class="admin-container">
-      <!-- ✅ Sidebar -->
+      <!--  Sidebar -->
       <AdminSidebarPage :open="sidebarOpen" @close="sidebarOpen = false" />
 
-      <!-- ✅ Main Content -->
+      <!--  Main Content -->
       <main class="admin-content">
         <router-view />
       </main>
@@ -36,13 +36,13 @@ const toggleSidebar = () => {
   background: #f8f9fa;
 }
 
-/* ✅ الحاوية الأساسية */
+/*  الحاوية الأساسية */
 .admin-container {
   display: flex;
   width: 100%;
 }
 
-/* ✅ زرار الموبايل */
+/*  زرار الموبايل */
 .sidebar-toggle {
   background: #0d6efd;
   color: white;
@@ -54,14 +54,14 @@ const toggleSidebar = () => {
   cursor: pointer;
 }
 
-/* ✅ على الشاشات الكبيرة: أخفي زرار الموبايل */
+/*  على الشاشات الكبيرة: أخفي زرار الموبايل */
 @media (min-width: 992px) {
   .sidebar-toggle {
     display: none;
   }
 }
 
-/* ✅ المحتوى ياخد المساحة الباقية */
+/*  المحتوى ياخد المساحة الباقية */
 .admin-content {
   flex-grow: 1;
   padding: 20px;

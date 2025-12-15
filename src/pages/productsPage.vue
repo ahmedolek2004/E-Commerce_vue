@@ -3,12 +3,12 @@
     <h1 class="mb-4">Our Products</h1>
 
 
-    <!-- ✅ No products -->
+    <!--  No products -->
     <div v-if="filteredProducts.length === 0" class="alert alert-info">
       No products found.
     </div>
 
-    <!-- ✅ Products -->
+    <!--  Products -->
     <div class="row">
      <div class="col-12 col-sm-6 col-md-6 col-lg-4 col-xl-3 mb-4" v-for="p in products" :key="p.id">
         <div class="card h-100 shadow-sm">
@@ -38,13 +38,13 @@ import { collection, onSnapshot } from "firebase/firestore"
 
 const products = ref([])
 
-// ✅ Filters
+//  Filters
 const searchName = ref("")
 const minPrice = ref("")
 const maxPrice = ref("")
 const selectedCategory = ref("")
 
-// ✅ Extract categories dynamically
+//  Extract categories dynamically
 const categories = ref([])
 
 onMounted(() => {
@@ -56,12 +56,12 @@ onMounted(() => {
 
     products.value = data
 
-    // ✅ Get unique categories
+    //  Get unique categories
     categories.value = [...new Set(data.map(p => p.categoryName))]
   })
 })
 
-// ✅ Computed filtered products
+//  Computed filtered products
 const filteredProducts = computed(() => {
   return products.value.filter(p => {
 

@@ -1,7 +1,7 @@
 <template>
   <aside class="admin-sidebar" :class="{ open: open }">
 
-    <!-- ✅ زرار الإغلاق في الموبايل -->
+    <!--  زرار الإغلاق في الموبايل -->
     <button class="close-btn d-lg-none" @click="$emit('close')">✖</button>
 
     <h4 class="fw-bold text-center py-3">Admin Panel</h4>
@@ -48,7 +48,7 @@ defineProps({
 </script>
 
 <style scoped>
-/* ✅ الشكل الأساسي */
+/*  الشكل الأساسي */
 .admin-sidebar {
   width: 250px;
   background: white;
@@ -56,7 +56,7 @@ defineProps({
   padding-top: 20px;
 }
 
-/* ✅ على الشاشات الصغيرة: مخفي */
+/*  على الشاشات الصغيرة: مخفي */
 @media (max-width: 991px) {
   .admin-sidebar {
     position: fixed;
@@ -67,12 +67,12 @@ defineProps({
     transition: 0.3s;
   }
 
-  /* ✅ لما تفتح */
+  /*  لما تفتح */
   .admin-sidebar.open {
     left: 0;
   }
 
-  /* ✅ زرار الإغلاق */
+  /*  زرار الإغلاق */
   .close-btn {
     background: none;
     border: none;
@@ -82,7 +82,7 @@ defineProps({
   }
 }
 
-/* ✅ على الشاشات الكبيرة: ثابت */
+/*  على الشاشات الكبيرة: ثابت */
 @media (min-width: 992px) {
   .admin-sidebar {
     position: relative;
@@ -90,7 +90,7 @@ defineProps({
   }
 }
 
-/* ✅ روابط السايدبار */
+/*  روابط السايدبار */
 .side-link {
   display: block;
   padding: 12px 15px;

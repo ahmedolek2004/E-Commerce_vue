@@ -1,7 +1,7 @@
 <template>
   <section class="admin-users">
 
-    <!-- ✅ Add User Form -->
+    <!--  Add User Form -->
     <div class="card user-form">
       <h4>Add New User</h4>
 
@@ -18,7 +18,7 @@
       </form>
     </div>
 
-    <!-- ✅ Users Table -->
+    <!--  Users Table -->
     <div class="card user-table">
       <h4>All Users</h4>
 
@@ -53,7 +53,7 @@
       </div>
     </div>
 
-    <!-- ✅ Edit User Form -->
+    <!--  Edit User Form -->
     <div v-if="editingUser" class="card user-form">
       <h4>Edit User</h4>
 
@@ -149,7 +149,7 @@ onMounted(fetchUsers)
   gap: 30px;
 }
 
-/* ✅ Card Style */
+/*  Card Style */
 .card {
   background: #fff;
   border: 1px solid #ddd;
@@ -158,7 +158,7 @@ onMounted(fetchUsers)
   box-shadow: 0 0 6px rgba(0,0,0,0.05);
 }
 
-/* ✅ Form Layout */
+/*  Form Layout */
 .user-form h4 {
   margin-bottom: 15px;
   font-weight: 600;
@@ -178,7 +178,7 @@ onMounted(fetchUsers)
   border-radius: 6px;
 }
 
-/* ✅ Table Layout */
+/*  Table Layout */
 .user-table h4 {
   margin-bottom: 15px;
   font-weight: 600;
@@ -226,7 +226,7 @@ onMounted(fetchUsers)
   color: white;
 }
 
-/* ✅ Buttons */
+/*  Buttons */
 .btn {
   padding: 8px 16px;
   border: none;

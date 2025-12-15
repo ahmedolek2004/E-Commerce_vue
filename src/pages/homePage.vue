@@ -1,6 +1,6 @@
 <template>
   <div>
-    <!-- ✅ Hero Slider -->
+    <!--  Hero Slider -->
     <section class="hero-slider position-relative">
       <div class="container py-5 text-center">
         <h1 class="display-4 fw-bold text-dark">Welcome to Our Store</h1>
@@ -60,7 +60,7 @@
 
 
 
-    <!-- ✅ Featured Products -->
+    <!--  Featured Products -->
     <section class="container py-5">
       <h3 class="fw-bold mb-4">Featured Products</h3>
       <div class="row">
@@ -77,7 +77,7 @@
       </div>
     </section>
 
-    <!-- ✅ Deals Section -->
+    <!--  Deals Section -->
     <section class="bg-warning bg-opacity-25 py-5">
       <div class="container">
         <h3 class="fw-bold mb-4">🔥 Today’s Hot Deals</h3>
@@ -101,20 +101,20 @@
 <script setup>
 import { RouterLink } from "vue-router";
 const featured = [
-  { title: "Smart Watch", desc: "Latest model 2024", img: "/images/1.webp" },
-  { title: "Headphones", desc: "Noise cancelling", img: "/images/1.webp" },
-  { title: "Sneakers", desc: "Comfortable & stylish", img: "/images/1.webp" },
-  { title: "Laptop", desc: "High performance", img: "/images/1.webp" },
+  { title: "Smart Watch", desc: "Latest model 2024", img: "/images/product40.jpg" },
+  { title: "Headphones", desc: "Noise cancelling", img: "/images/product47.jpg" },
+  { title: "Sneakers", desc: "Comfortable & stylish", img: "/images/product46.jpg" },
+  { title: "Laptop", desc: "High performance", img: "/images/product34.jpg" },
 ];
 
 const deals = [
   {
-    title: "50% Off Headphones",
+    title: "50% Off Phones",
     desc: "Limited time offer",
     img: "/images/1.webp",
   },
-  { title: "Buy 1 Get 1 Free", desc: "Fashion sale", img: "/images/1.webp" },
-  { title: "Hot Deal: Smart TV", desc: "Save up to 30%", img: "/images/1.webp" },
+  { title: "Buy 1 Get 1 Free", desc: "Fashion sale", img: "/images/product26.jpg" },
+  { title: "Hot Deal: Smart TV", desc: "Save up to 30%", img: "/images/product41.jpg" },
 ];
 </script>
 

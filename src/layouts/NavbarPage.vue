@@ -48,7 +48,7 @@
               <small>Deals</small>
             </RouterLink>
           </li>
-          
+
           <li class="nav-item">
             <RouterLink class="nav-link text-white text-center" to="/about">
               <i class="bi bi-info-circle fs-5"></i><br />
@@ -66,7 +66,7 @@
 
         </ul>
 
-        <!-- ✅ Right Icons -->
+        <!--  Right Icons -->
         <ul class="navbar-nav">
 
           <!-- Cart -->
@@ -96,7 +96,7 @@
     </div>
   </nav>
 
-  <!-- ✅ Search Bar Under Navbar -->
+  <!--  Search Bar Under Navbar -->
   <div class="bg-light py-2 shadow-sm search-bar-wrapper">
     <div class="container">
       <form class="d-flex" @submit.prevent="goSearch">
@@ -122,7 +122,7 @@ import { useCartStore } from "../stores/cart"
 const router = useRouter()
 const searchQuery = ref("")
 
-// ✅ Pinia cart store
+//  Pinia cart store
 const cartStore = useCartStore()
 
 const goSearch = () => {

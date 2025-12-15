@@ -4,19 +4,19 @@
 
       <h2 class="mb-4 text-center">Authentication</h2>
 
-      <!-- ✅ Switch Buttons -->
+      <!--  Switch Buttons -->
       <div class="mb-3 d-flex justify-content-center">
         <button class="btn btn-outline-primary me-2" @click="mode = 'login'">Login</button>
         <button class="btn btn-outline-success" @click="mode = 'register'">Register</button>
       </div>
 
-      <!-- ✅ Loading -->
+      <!--  Loading -->
       <div v-if="loading" class="text-center my-4">
         <div class="spinner-border text-primary"></div>
         <p class="mt-2">Loading...</p>
       </div>
 
-      <!-- ✅ Login Form -->
+      <!--  Login Form -->
       <div v-if="mode === 'login' && !currentUser && !loading" class="card mb-4 shadow-sm">
         <div class="card-body">
           <h5 class="card-title text-center">Login</h5>
@@ -41,7 +41,7 @@
         </div>
       </div>
 
-      <!-- ✅ Register Form -->
+      <!--  Register Form -->
       <div v-if="mode === 'register' && !currentUser && !loading" class="card mb-4 shadow-sm">
         <div class="card-body">
           <h5 class="card-title text-center">Register</h5>
@@ -79,20 +79,19 @@
         </div>
       </div>
 
-      <!-- ✅ Logout -->
+      <!-- Logout -->
       <div v-if="currentUser && !loading" class="card mb-4 shadow-sm">
         <div class="card-body text-center">
           <h5 class="card-title">Logout</h5>
-          <p class="mb-2">Logged in as: {{ currentUser.email }}</p>
+          <p class="mb-2"> {{ currentUser.email }}</p>
           <button @click="handleLogout" class="btn btn-danger">Logout</button>
         </div>
       </div>
 
-      <!-- ✅ Admin Info -->
+      <!--  Admin Info -->
       <div v-if="isAdmin && !loading" class="card shadow-sm">
         <div class="card-body text-center">
           <h5 class="card-title">Admin Access</h5>
-          <p>✅ You are an admin</p>
           <button class="btn btn-dark" @click="router.push('/admin')">Go to Admin Panel</button>
         </div>
       </div>
@@ -111,11 +110,11 @@ import { useRouter } from "vue-router"
 
 const router = useRouter()
 
-// ✅ UI State
+//  UI State
 const mode = ref("login")
 const loading = ref(true)
 
-// ✅ Form fields
+//  Form fields
 const registerName = ref("")
 const registerEmail = ref("")
 const registerPassword = ref("")
@@ -123,19 +122,19 @@ const confirmPassword = ref("")
 const loginEmail = ref("")
 const loginPassword = ref("")
 
-// ✅ User state
+//  User state
 const currentUser = ref(null)
 const userRole = ref("user")
 
-// ✅ Derived state
+//  Derived state
 const isAdmin = ref(false)
 
-// ✅ Password visibility
+//  Password visibility
 const showLoginPassword = ref(false)
 const showRegisterPassword = ref(false)
 const showConfirmPassword = ref(false)
 
-// ✅ Load user role
+//  Load user role
 const loadUserRole = async (uid) => {
   const snap = await getDoc(doc(db, "users", uid))
   if (snap.exists()) {
@@ -147,7 +146,7 @@ const loadUserRole = async (uid) => {
   }
 }
 
-// ✅ Register
+//  Register
 const handleRegister = async () => {
   if (registerPassword.value !== confirmPassword.value) {
     alert("❌ Passwords do not match")
@@ -156,14 +155,14 @@ const handleRegister = async () => {
 
   try {
     await register(registerName.value, registerEmail.value, registerPassword.value)
-    alert(`✅ Registered successfully! Welcome ${registerName.value}`)
+    alert(` Registered successfully! Welcome ${registerName.value}`)
     router.push("/")
   } catch (err) {
     alert("❌ " + err.message)
   }
 }
 
-// ✅ Login
+//  Login
 const handleLogin = async () => {
   try {
     const user = await login(loginEmail.value, loginPassword.value)
@@ -182,18 +181,18 @@ const handleLogin = async () => {
   }
 }
 
-// ✅ Logout
+//  Logout
 const handleLogout = async () => {
   try {
     await logout()
-    alert("✅ Logged out successfully!")
+    alert(" Logged out successfully!")
     router.push("/auth")
   } catch (err) {
     alert("❌ " + err.message)
   }
 }
 
-// ✅ Track user
+//  Track user
 onMounted(() => {
   onAuthStateChanged(auth, async (user) => {
     currentUser.value = user

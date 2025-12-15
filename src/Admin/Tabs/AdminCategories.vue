@@ -1,7 +1,7 @@
 <template>
   <div class="admin-categories">
 
-    <!-- ✅ Add Category -->
+    <!--  Add Category -->
     <div class="card form-card">
       <h4 class="fw-semibold mb-3">Add New Category</h4>
 
@@ -22,7 +22,7 @@
       </form>
     </div>
 
-    <!-- ✅ Categories Table -->
+    <!--  Categories Table -->
     <div class="card table-card">
       <h4 class="fw-semibold mb-3">All Categories</h4>
 
@@ -52,7 +52,7 @@
       </div>
     </div>
 
-    <!-- ✅ Edit Category -->
+    <!--  Edit Category -->
     <div v-if="editingCategory" class="card form-card">
       <h5 class="fw-semibold mb-3">Edit Category</h5>
 
@@ -87,7 +87,7 @@ import {
   serverTimestamp,
 } from "firebase/firestore"
 
-/* ✅ CATEGORIES */
+/*  CATEGORIES */
 const categories = ref([])
 
 const cName = ref("")
@@ -113,7 +113,7 @@ const addCategory = async () => {
   cImg.value = ""
 }
 
-/* ✅ Edit Category */
+/*  Edit Category */
 const editingCategory = ref(null)
 
 const editCName = ref("")
@@ -154,7 +154,7 @@ onMounted(fetchCategories)
   gap: 30px;
 }
 
-/* ✅ Card */
+/*  Card */
 .card {
   background: #fff;
   border: 1px solid #ddd;
@@ -162,7 +162,7 @@ onMounted(fetchCategories)
   padding: 20px;
 }
 
-/* ✅ Form Layout */
+/*  Form Layout */
 .form-card h4,
 .form-card h5 {
   margin-bottom: 15px;
@@ -180,7 +180,7 @@ onMounted(fetchCategories)
   border-radius: 6px;
 }
 
-/* ✅ Table */
+/*  Table */
 .table-wrapper {
   overflow-x: auto;
   max-height: 70vh;
@@ -205,7 +205,7 @@ onMounted(fetchCategories)
   color: white;
 }
 
-/* ✅ Buttons */
+/*  Buttons */
 .btn-sm {
   padding: 6px 12px;
   font-size: 0.85rem;
