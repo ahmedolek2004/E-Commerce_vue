@@ -17,23 +17,23 @@
         <div id="homeSlider" class="carousel slide custom-carousel" data-bs-ride="carousel">
           <div class="carousel-inner rounded-4 shadow-sm">
             <div class="carousel-item active">
-              <img src="/images/2.webp" class="d-block w-100" alt="Electronics" />
+              <img src="/images/2.png" class="d-block w-100" alt="Electronics" />
             </div>
 
             <div class="carousel-item">
-              <img src="/images/3.webp" class="d-block w-100" alt="Books" />
+              <img src="/images/3.png" class="d-block w-100" alt="Books" />
             </div>
 
             <div class="carousel-item">
-              <img src="/images/4.webp" class="d-block w-100" alt="Fashion" />
+              <img src="/images/4.png" class="d-block w-100" alt="Fashion" />
             </div>
 
             <div class="carousel-item">
-              <img src="/images/5.webp" class="d-block w-100" alt="Toys" />
+              <img src="/images/5.png" class="d-block w-100" alt="Toys" />
             </div>
 
             <div class="carousel-item">
-              <img src="/images/6.webp" class="d-block w-100" alt="Sports" />
+              <img src="/images/6.png" class="d-block w-100" alt="Sports" />
             </div>
           </div>
 
