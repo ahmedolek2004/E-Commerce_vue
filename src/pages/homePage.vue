@@ -101,20 +101,20 @@
 <script setup>
 import { RouterLink } from "vue-router";
 const featured = [
-  { title: "Smart Watch", desc: "Latest model 2024", img: "/images/product40.jpg" },
-  { title: "Headphones", desc: "Noise cancelling", img: "/images/product47.jpg" },
-  { title: "Sneakers", desc: "Comfortable & stylish", img: "/images/product46.jpg" },
-  { title: "Laptop", desc: "High performance", img: "/images/product34.jpg" },
+  { title: "Smart Watch", desc: "Latest model 2024", img: "/images/product40.png" },
+  { title: "Headphones", desc: "Noise cancelling", img: "/images/product47.png" },
+  { title: "Sneakers", desc: "Comfortable & stylish", img: "/images/product46.png" },
+  { title: "Laptop", desc: "High performance", img: "/images/product34.png" },
 ];
 
 const deals = [
   {
     title: "50% Off Phones",
     desc: "Limited time offer",
-    img: "/images/1.webp",
+    img: "/images/1.png",
   },
-  { title: "Buy 1 Get 1 Free", desc: "Fashion sale", img: "/images/product26.jpg" },
-  { title: "Hot Deal: Smart TV", desc: "Save up to 30%", img: "/images/product41.jpg" },
+  { title: "Buy 1 Get 1 Free", desc: "Fashion sale", img: "/images/product26.png" },
+  { title: "Hot Deal: Smart TV", desc: "Save up to 30%", img: "/images/product41.png" },
 ];
 </script>
 
