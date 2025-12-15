@@ -2,39 +2,6 @@
   <div class="container py-5">
     <h1 class="mb-4">Our Products</h1>
 
-    <!-- ✅ Filters -->
-    <div class="card p-3 mb-4 shadow-sm">
-      <div class="row g-3">
-
-        <!-- Search by name -->
-        <div class="col-md-4">
-          <input v-model="searchName" class="form-control" placeholder="Search by name..." />
-        </div>
-
-        <!-- Price min -->
-        <div class="col-md-3">
-          <input v-model.number="minPrice" type="number" class="form-control" placeholder="Min price" />
-        </div>
-
-        <!-- Price max -->
-        <div class="col-md-3">
-          <input v-model.number="maxPrice" type="number" class="form-control" placeholder="Max price" />
-        </div>
-
-        <!-- Category -->
-        <div class="col-md-2">
-          <select v-model="selectedCategory" class="form-select">
-            <option value="">All Categories</option>
-            <option v-for="c in categories" :key="c" :value="c">{{ c }}</option>
-          </select>
-        </div>
-
-      </div>
-
-      <div class="text-end mt-3">
-        <button class="btn btn-secondary btn-sm" @click="resetFilters">Reset</button>
-      </div>
-    </div>
 
     <!-- ✅ No products -->
     <div v-if="filteredProducts.length === 0" class="alert alert-info">
@@ -122,13 +89,7 @@ const filteredProducts = computed(() => {
   })
 })
 
-// ✅ Reset filters
-const resetFilters = () => {
-  searchName.value = ""
-  minPrice.value = ""
-  maxPrice.value = ""
-  selectedCategory.value = ""
-}
+
 
 </script>
 

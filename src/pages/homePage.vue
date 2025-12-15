@@ -58,18 +58,7 @@
       </div>
     </section>
 
-    <!-- ✅ Quick Icon Categories -->
-    <section class="container py-5">
-      <h3 class="fw-bold mb-4">Shop by Category</h3>
-      <div class="row text-center">
-        <div class="col-6 col-md-3 mb-4" v-for="cat in categories" :key="cat.name">
-          <div class="p-4 shadow-sm rounded hover-card">
-            <i :class="cat.icon" class="fs-1 text-primary mb-3"></i>
-            <h6>{{ cat.name }}</h6>
-          </div>
-        </div>
-      </div>
-    </section>
+
 
     <!-- ✅ Featured Products -->
     <section class="container py-5">
@@ -112,12 +101,6 @@
 <script setup>
 import { RouterLink } from "vue-router";
 
-const categories = [
-  { name: "Electronics", icon: "bi bi-phone" },
-  { name: "Fashion", icon: "bi bi-bag" },
-  { name: "Home", icon: "bi bi-house" },
-  { name: "Sports", icon: "bi bi-bicycle" },
-];
 
 const featured = [
   { title: "Smart Watch", desc: "Latest model 2024", img: "/images/1.webp" },
