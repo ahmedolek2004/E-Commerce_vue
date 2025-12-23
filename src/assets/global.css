@@ -1,0 +1,43 @@
+/* 🔒 Scoped للصفحة فقط */
+.home-page .card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 380px;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.home-page .card-img-top {
+  height: 180px;
+  object-fit: cover;
+  width: 100%;
+}
+
+.home-page .card-body {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  padding: 15px;
+}
+
+.home-page .card-title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.home-page .card-body p {
+  flex-grow: 1;
+  font-size: 0.9rem;
+  color: #6c757d;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  overflow: hidden;
+}
+
+.home-page .card-body .btn {
+  margin-top: auto;
+}

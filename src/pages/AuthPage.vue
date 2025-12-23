@@ -92,7 +92,7 @@
       <div v-if="isAdmin && !loading" class="card shadow-sm">
         <div class="card-body text-center">
           <h5 class="card-title">Admin Access</h5>
-          <button class="btn btn-dark" @click="router.push('/admin')">Go to Admin Panel</button>
+          <button class="btn btn-dark" @click="goToAdmin">Go to Admin Panel</button>
         </div>
       </div>
 
@@ -101,7 +101,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, } from "vue"
+import { ref, onMounted } from "vue"
 import { auth, db } from "../firebase"
 import { register, login, logout } from "../services/authService"
 import { onAuthStateChanged } from "firebase/auth"
@@ -110,11 +110,11 @@ import { useRouter } from "vue-router"
 
 const router = useRouter()
 
-//  UI State
+// UI State
 const mode = ref("login")
 const loading = ref(true)
 
-//  Form fields
+// Form fields
 const registerName = ref("")
 const registerEmail = ref("")
 const registerPassword = ref("")
@@ -122,31 +122,46 @@ const confirmPassword = ref("")
 const loginEmail = ref("")
 const loginPassword = ref("")
 
-//  User state
+// User state
 const currentUser = ref(null)
 const userRole = ref("user")
 
-//  Derived state
+// Derived state
 const isAdmin = ref(false)
 
-//  Password visibility
+// Password visibility
 const showLoginPassword = ref(false)
 const showRegisterPassword = ref(false)
 const showConfirmPassword = ref(false)
 
-//  Load user role
+// قائمة الإيميلات المسموح لها كأدمن
+const adminEmails = ['admin@example.com', 'ahmed@example.com', 'test@test.com']
+
+// Load user role
 const loadUserRole = async (uid) => {
-  const snap = await getDoc(doc(db, "users", uid))
-  if (snap.exists()) {
-    userRole.value = snap.data().role
-    isAdmin.value = snap.data().role === "admin"
-  } else {
+  try {
+    const snap = await getDoc(doc(db, "users", uid))
+    if (snap.exists()) {
+      userRole.value = snap.data().role
+      isAdmin.value = snap.data().role === "admin"
+    } else {
+      userRole.value = "user"
+      isAdmin.value = false
+    }
+
+    // بالإضافة للتحقق من قاعدة البيانات، تحقق من قائمة الإيميلات
+    if (currentUser.value && adminEmails.includes(currentUser.value.email)) {
+      isAdmin.value = true
+      userRole.value = "admin"
+    }
+  } catch (error) {
+    console.error("Error loading user role:", error)
     userRole.value = "user"
     isAdmin.value = false
   }
 }
 
-//  Register
+// Register
 const handleRegister = async () => {
   if (registerPassword.value !== confirmPassword.value) {
     alert("❌ Passwords do not match")
@@ -155,14 +170,20 @@ const handleRegister = async () => {
 
   try {
     await register(registerName.value, registerEmail.value, registerPassword.value)
-    alert(` Registered successfully! Welcome ${registerName.value}`)
+    alert(`✅ Registered successfully! Welcome ${registerName.value}`)
+
+    // إذا كان الإيميل من قائمة الأدمن، عيّنه كأدمن
+    if (adminEmails.includes(registerEmail.value)) {
+      alert("🎉 You have been granted admin access!")
+    }
+
     router.push("/")
   } catch (err) {
     alert("❌ " + err.message)
   }
 }
 
-//  Login
+// Login
 const handleLogin = async () => {
   try {
     const user = await login(loginEmail.value, loginPassword.value)
@@ -171,7 +192,8 @@ const handleLogin = async () => {
     await loadUserRole(user.uid)
 
     if (isAdmin.value) {
-      router.push("/admin")
+      alert("👑 Welcome Admin!")
+      goToAdmin()
     } else {
       router.push("/")
     }
@@ -181,18 +203,27 @@ const handleLogin = async () => {
   }
 }
 
-//  Logout
+// Go to Admin Panel
+const goToAdmin = () => {
+  if (isAdmin.value) {
+    router.push("/admin")
+  } else {
+    alert("⚠️ You don't have admin access!")
+  }
+}
+
+// Logout
 const handleLogout = async () => {
   try {
     await logout()
-    alert(" Logged out successfully!")
+    alert("👋 Logged out successfully!")
     router.push("/auth")
   } catch (err) {
     alert("❌ " + err.message)
   }
 }
 
-//  Track user
+// Track user
 onMounted(() => {
   onAuthStateChanged(auth, async (user) => {
     currentUser.value = user
@@ -213,5 +244,44 @@ onMounted(() => {
 .auth-box {
   width: 100%;
   max-width: 480px;
+}
+
+.card {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.btn {
+  border-radius: 8px;
+  padding: 0.5rem 1.5rem;
+}
+
+.input-group .btn {
+  border-radius: 0 0.375rem 0.375rem 0;
+}
+
+.form-control {
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+}
+
+.form-control:focus {
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+  border-color: #86b7fe;
+}
+
+@media (max-width: 576px) {
+  .auth-box {
+    padding: 1rem;
+  }
+
+  .d-flex.justify-content-center {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .btn {
+    width: 100%;
+  }
 }
 </style>
