@@ -331,7 +331,6 @@ const deals = [
   },
 ];
 </script>
-
 <style scoped>
 .hero-section {
   background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
@@ -350,49 +349,15 @@ const deals = [
   box-shadow: 0 20px 40px rgba(0,0,0,0.1);
   transition: transform 0.3s ease;
 }
+.floating-card:hover { transform: translateY(-10px); }
 
-.floating-card:hover {
-  transform: translateY(-10px);
-}
+.card-1 { width: 250px; top: 0; left: 0; z-index: 3; animation: float-1 6s ease-in-out infinite; }
+.card-2 { width: 220px; top: 100px; right: 50px; z-index: 2; animation: float-2 7s ease-in-out infinite; }
+.card-3 { width: 200px; bottom: 0; left: 100px; z-index: 1; animation: float-3 8s ease-in-out infinite; }
 
-.card-1 {
-  width: 250px;
-  top: 0;
-  left: 0;
-  z-index: 3;
-  animation: float-1 6s ease-in-out infinite;
-}
-
-.card-2 {
-  width: 220px;
-  top: 100px;
-  right: 50px;
-  z-index: 2;
-  animation: float-2 7s ease-in-out infinite;
-}
-
-.card-3 {
-  width: 200px;
-  bottom: 0;
-  left: 100px;
-  z-index: 1;
-  animation: float-3 8s ease-in-out infinite;
-}
-
-@keyframes float-1 {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-20px); }
-}
-
-@keyframes float-2 {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-15px); }
-}
-
-@keyframes float-3 {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
-}
+@keyframes float-1 { 0%,100% { transform: translateY(0);} 50% { transform: translateY(-20px);} }
+@keyframes float-2 { 0%,100% { transform: translateY(0);} 50% { transform: translateY(-15px);} }
+@keyframes float-3 { 0%,100% { transform: translateY(0);} 50% { transform: translateY(-10px);} }
 
 .text-gradient {
   background: linear-gradient(90deg, #4a6cf7, #6a11cb);
@@ -402,15 +367,12 @@ const deals = [
 }
 
 .stat-card {
-  background: white;
+  background: #fff;
   border-radius: 16px;
   box-shadow: 0 10px 30px rgba(0,0,0,0.05);
   transition: transform 0.3s ease;
 }
-
-.stat-card:hover {
-  transform: translateY(-5px);
-}
+.stat-card:hover { transform: translateY(-5px); }
 
 .stat-icon {
   display: inline-flex;
@@ -419,36 +381,22 @@ const deals = [
   background: rgba(var(--bs-primary-rgb), 0.1);
 }
 
-.slider-section .carousel-item {
-  padding: 1rem;
-}
+.slider-section .carousel-item { padding: 1rem; }
 
-.featured-card {
-  height: 400px;
-  position: relative;
-}
-
-.featured-card img {
-  transition: transform 0.5s ease;
-}
-
-.featured-card:hover img {
-  transform: scale(1.05);
-}
+.featured-card { height: 400px; position: relative; }
+.featured-card img { transition: transform 0.5s ease; }
+.featured-card:hover img { transform: scale(1.05); }
 
 .overlay-content {
   position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
+  bottom: 0; left: 0; right: 0;
   background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
 }
 
 .product-card {
-  transition: all 0.3s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
   border-radius: 12px;
 }
-
 .product-card:hover {
   transform: translateY(-10px);
   box-shadow: 0 15px 35px rgba(0,0,0,0.1);
@@ -459,49 +407,31 @@ const deals = [
   overflow: hidden;
   position: relative;
 }
-
 .product-image-wrapper img {
-  height: 100%;
-  width: 100%;
+  width: 100%; height: 100%;
   object-fit: cover;
   transition: transform 0.5s ease;
 }
-
-.product-card:hover .product-image-wrapper img {
-  transform: scale(1.1);
-}
+.product-card:hover .product-image-wrapper img { transform: scale(1.1); }
 
 .product-overlay {
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  inset: 0;
   background: rgba(0,0,0,0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: flex; align-items: center; justify-content: center;
   opacity: 0;
   transition: opacity 0.3s ease;
 }
-
-.product-card:hover .product-overlay {
-  opacity: 1;
-}
+.product-card:hover .product-overlay { opacity: 1; }
 
 .hot-deals {
   background: linear-gradient(135deg, #fff5f5 0%, #fff0f0 100%);
   position: relative;
 }
-
 .hot-deals::before {
   content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-   background: #e5e5e5
+  position: absolute; inset: 0;
+  background: #e5e5e5;
 }
 
 .deal-card {
@@ -509,17 +439,13 @@ const deals = [
   position: relative;
   transition: transform 0.3s ease;
 }
-
-.deal-card:hover {
-  transform: translateY(-10px);
-}
+.deal-card:hover { transform: translateY(-10px); }
 
 .deal-badge {
   position: absolute;
-  top: 20px;
-  right: 20px;
+  top: 20px; right: 20px;
   background: #ff4444;
-  color: white;
+  color: #fff;
   padding: 8px 16px;
   border-radius: 50px;
   font-weight: bold;
@@ -527,57 +453,31 @@ const deals = [
   z-index: 2;
 }
 
-.deal-image-wrapper {
-  height: 200px;
-  overflow: hidden;
-}
-
+.deal-image-wrapper { height: 200px; overflow: hidden; }
 .deal-image-wrapper img {
-  width: 100%;
-  height: 100%;
+  width: 100%; height: 100%;
   object-fit: cover;
   transition: transform 0.5s ease;
 }
+.deal-card:hover .deal-image-wrapper img { transform: scale(1.1); }
 
-.deal-card:hover .deal-image-wrapper img {
-  transform: scale(1.1);
-}
-
-.countdown {
-  font-size: 1.1rem;
-  font-weight: 600;
-}
+.countdown { font-size: 1.1rem; font-weight: 600; }
 
 .newsletter .card {
   background: linear-gradient(135deg, #4a6cf7 0%, #6a11cb 100%);
 }
 
 @media (max-width: 992px) {
-  .hero-image-wrapper {
-    height: 400px;
-  }
-
-  .floating-card {
-    width: 200px !important;
-  }
-
+  .hero-image-wrapper { height: 400px; }
+  .floating-card { width: 200px !important; }
   .card-1 { left: 10px; }
   .card-2 { right: 10px; }
   .card-3 { left: 50px; }
 }
 
 @media (max-width: 768px) {
-  .hero-image-wrapper {
-    height: 300px;
-    margin-top: 2rem;
-  }
-
-  .floating-card {
-    width: 150px !important;
-  }
-
-  .display-4 {
-    font-size: 2.5rem;
-  }
+  .hero-image-wrapper { height: 300px; margin-top: 2rem; }
+  .floating-card { width: 150px !important; }
+  .display-4 { font-size: 2.5rem; }
 }
 </style>

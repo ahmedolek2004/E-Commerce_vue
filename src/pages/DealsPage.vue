@@ -64,4 +64,18 @@ const formatCurrency = (value) => `$${value.toFixed(2)}`
   height: 220px;
   object-fit: cover;
 }
+.card-text {
+  display: -webkit-box;
+  display: box; /* fallback قديم لبعض المتصفحات */
+  -webkit-box-orient: vertical;
+  box-orient: vertical;
+
+  -webkit-line-clamp: 3; /* للمتصفحات المبنية على WebKit */
+  line-clamp: 2;         /* الخاصية القياسية الجديدة */
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-height: 60px;
+}
+
 </style>

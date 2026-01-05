@@ -274,7 +274,8 @@ const toggleDescription = (index) => {
 
 <style scoped>
 .product-card {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   border-radius: 12px;
   overflow: hidden;
 }
@@ -296,6 +297,10 @@ const toggleDescription = (index) => {
   height: 100%;
   object-fit: cover;
   transition: transform 0.5s ease;
+  /* Skeleton loading effect */
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
 }
 
 .product-card:hover .product-image {
@@ -341,14 +346,10 @@ const toggleDescription = (index) => {
 .card-title {
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2; /* خاصية قياسية */
   -webkit-box-orient: vertical;
   overflow: hidden;
   min-height: 3em;
-  line-clamp: 2;
-}
-
-.description-wrapper {
-  position: relative;
 }
 
 .description-text {
@@ -360,14 +361,13 @@ const toggleDescription = (index) => {
 .description-text:not(.expanded) {
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   max-height: 3em;
-  line-clamp: 2;
 }
 
 .description-text.expanded {
   display: block;
-  max-height: none;
 }
 
 .read-more-btn {
@@ -408,13 +408,7 @@ const toggleDescription = (index) => {
   }
 }
 
-/* Smooth loading for images */
-.product-image {
-  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-  background-size: 200% 100%;
-  animation: loading 1.5s infinite;
-}
-
+/* Skeleton loading animation */
 @keyframes loading {
   0% {
     background-position: 200% 0;
@@ -424,7 +418,7 @@ const toggleDescription = (index) => {
   }
 }
 
-/* Custom notification style */
+/* Notification animation */
 .custom-notification {
   animation: slideIn 0.3s ease, fadeOut 0.3s ease 2.7s;
 }
@@ -449,3 +443,4 @@ const toggleDescription = (index) => {
   }
 }
 </style>
+
