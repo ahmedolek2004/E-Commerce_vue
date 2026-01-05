@@ -3,12 +3,16 @@ import { auth, db } from "../firebase"
 import { doc, getDoc } from "firebase/firestore"
 
 const routes = [
+  { path: "/profile", name: "profile", component: () => import("../pages/ProfilePage.vue") },
+  { path: "/orders", name: "orders", component: () => import("../pages/OrdersPage.vue") },
+  { path: "/wishlist", name: "wishlist", component: () => import("../pages/WishlistPage.vue") },
+
   // ✅ Home
-  { path: "/", name: "home", component: () => import("../pages/HomePage.vue") },
+  { path: "/", name: "home", component: () => import("../pages/homePage.vue") },
 
   // ✅ Products
-  { path: "/products", name: "products", component: () => import("../pages/ProductsPage.vue") },
-  { path: "/products/:id", name: "product-details", component: () => import("../pages/ProductPage.vue") },
+  { path: "/products", name: "products", component: () => import("../pages/productsPage.vue") },
+  { path: "/products/:id", name: "product-details", component: () => import("../pages/productPage.vue") },
 
   // ✅ Categories
   { path: "/categories", name: "categories", component: () => import("../pages/CategoriesPage.vue") },
