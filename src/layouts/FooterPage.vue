@@ -216,44 +216,13 @@ import { ref, onMounted } from "vue"
 import { RouterLink } from "vue-router"
 import { auth } from "../firebase"
 import { onAuthStateChanged } from "firebase/auth"
-import { doc, getDoc } from "firebase/firestore"
-import { db } from "../firebase"
+import { checkAdminRole } from "../utils/admin"
 
 const isAdmin = ref(false)
-const adminEmails = ['admin@example.com', 'ahmed@example.com', 'test@test.com']
 
-// Check admin status
-const checkAdminStatus = async (user) => {
-  if (!user) return false
-
-  // Check email list
-  if (adminEmails.includes(user.email)) {
-    isAdmin.value = true
-    return
-  }
-
-  // Check Firestore role
-  try {
-    const snap = await getDoc(doc(db, "users", user.uid))
-    if (snap.exists() && snap.data().role === "admin") {
-      isAdmin.value = true
-      return
-    }
-  } catch (error) {
-    console.error("Error checking admin status:", error)
-  }
-
-  isAdmin.value = false
-}
-
-// Track auth state
 onMounted(() => {
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      checkAdminStatus(user)
-    } else {
-      isAdmin.value = false
-    }
+  onAuthStateChanged(auth, async (user) => {
+    isAdmin.value = user ? await checkAdminRole(user) : false
   })
 })
 </script>

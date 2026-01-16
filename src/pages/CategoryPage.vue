@@ -46,7 +46,6 @@ const category = ref(null)
 const products = ref([])
 
 onMounted(async () => {
-  //  Load category info
   const catRef = doc(db, "categories", categoryId)
   const catSnap = await getDoc(catRef)
 
@@ -54,7 +53,6 @@ onMounted(async () => {
     category.value = { id: catSnap.id, ...catSnap.data() }
   }
 
-  //  Load products in this category
   const q = query(collection(db, "products"), where("categoryId", "==", categoryId))
   const snap = await getDocs(q)
 

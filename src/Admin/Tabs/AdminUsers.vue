@@ -1,7 +1,6 @@
 <template>
   <section class="admin-users">
 
-    <!--  Add User Form -->
     <div class="card user-form">
       <h4>Add New User</h4>
 
@@ -18,7 +17,6 @@
       </form>
     </div>
 
-    <!--  Users Table -->
     <div class="card user-table">
       <h4>All Users</h4>
 
@@ -53,7 +51,6 @@
       </div>
     </div>
 
-    <!--  Edit User Form -->
     <div v-if="editingUser" class="card user-form">
       <h4>Edit User</h4>
 

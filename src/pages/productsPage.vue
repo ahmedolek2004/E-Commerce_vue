@@ -3,7 +3,14 @@
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-5">
       <div>
         <h1 class="fw-bold text-dark mb-2">Our Products</h1>
-        <p class="text-muted">{{ filteredProducts.length }} products available</p>
+        <p class="text-muted">
+          <span v-if="loading">Loading...</span>
+          <span v-else>
+            {{ filteredProducts.length }} of {{ products.length }} product{{ products.length !== 1 ? 's' : '' }}
+            <span v-if="searchName || selectedCategory || minPrice || maxPrice">found</span>
+            <span v-else>available</span>
+          </span>
+        </p>
       </div>
 
       <!-- Search and Filters -->
@@ -57,8 +64,22 @@
       </div>
     </div>
 
-    <!-- No products message -->
-    <div v-if="filteredProducts.length === 0" class="text-center py-5">
+    <div v-if="loading" class="text-center py-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <p class="mt-3 text-muted">Loading products...</p>
+    </div>
+
+    <div v-else-if="filteredProducts.length === 0 && products.length === 0" class="text-center py-5">
+      <div class="mb-4">
+        <i class="bi bi-box-seam display-1 text-muted opacity-50"></i>
+      </div>
+      <h3 class="fw-semibold text-muted mb-3">No products available</h3>
+      <p class="text-muted mb-4">Check back later for new products</p>
+    </div>
+
+    <div v-else-if="filteredProducts.length === 0" class="text-center py-5">
       <div class="mb-4">
         <i class="bi bi-search display-1 text-muted opacity-50"></i>
       </div>
@@ -69,23 +90,24 @@
       </button>
     </div>
 
-    <!-- Products Grid -->
-    <div class="row g-4">
+    <div v-else class="row g-4">
       <div
         class="col-12 col-sm-6 col-lg-4 col-xl-3"
-        v-for="(p, index) in filteredProducts"
+        v-for="p in filteredProducts"
         :key="p.id"
       >
         <div class="card h-100 product-card border-0 shadow-sm overflow-hidden">
           <!-- Product Image with fixed aspect ratio -->
           <div class="product-image-wrapper position-relative">
-            <img
-              :src="p.img || '/placeholder-image.jpg'"
-              :alt="p.title"
-              class="card-img-top product-image"
-              loading="lazy"
-              @error="handleImageError"
-            />
+            <RouterLink :to="`/products/${p.id}`">
+              <img
+                :src="p.img || '/placeholder-image.jpg'"
+                :alt="p.title"
+                class="card-img-top product-image"
+                loading="lazy"
+                @error="handleImageError"
+              />
+            </RouterLink>
             <div class="product-badge" v-if="p.categoryName">
               <span class="badge bg-primary">{{ p.categoryName }}</span>
             </div>
@@ -101,25 +123,27 @@
           </div>
 
           <div class="card-body d-flex flex-column">
-            <h5 class="card-title fw-semibold text-dark mb-2">
-              {{ p.title }}
-            </h5>
+            <RouterLink :to="`/products/${p.id}`" class="text-decoration-none">
+              <h5 class="card-title fw-semibold text-dark mb-2">
+                {{ p.title }}
+              </h5>
+            </RouterLink>
 
             <!-- Description with expand/collapse -->
             <div class="description-wrapper mb-3">
               <p
                 class="card-text text-muted small mb-2 description-text"
-                :class="{ 'expanded': expandedDescriptions[index] }"
+                :class="{ 'expanded': expandedDescriptions[p.id] }"
               >
-                {{ p.desc }}
+                {{ p.desc || 'No description available' }}
               </p>
               <button
                 v-if="shouldShowReadMore(p.desc)"
                 class="btn btn-link btn-sm text-decoration-none p-0 read-more-btn"
-                @click="toggleDescription(index)"
+                @click="toggleDescription(p.id)"
               >
-                {{ expandedDescriptions[index] ? 'Show Less' : 'Read More' }}
-                <i class="bi ms-1" :class="expandedDescriptions[index] ? 'bi-chevron-up' : 'bi-chevron-down'"></i>
+                {{ expandedDescriptions[p.id] ? 'Show Less' : 'Read More' }}
+                <i class="bi ms-1" :class="expandedDescriptions[p.id] ? 'bi-chevron-up' : 'bi-chevron-down'"></i>
               </button>
             </div>
 
@@ -159,7 +183,6 @@
 </template>
 
 <script setup>
-import "@/assets/global.css";
 import { ref, computed, onMounted } from "vue"
 import { RouterLink } from "vue-router"
 import { useCartStore } from "../stores/cart"
@@ -174,6 +197,7 @@ const maxPrice = ref("")
 const selectedCategory = ref("")
 const categories = ref([])
 const expandedDescriptions = ref({})
+const loading = ref(true)
 
 onMounted(() => {
   onSnapshot(collection(db, "products"), (snapshot) => {
@@ -184,11 +208,7 @@ onMounted(() => {
 
     products.value = data
     categories.value = [...new Set(data.map(p => p.categoryName).filter(Boolean))]
-
-    // Initialize expanded state
-    data.forEach((_, index) => {
-      expandedDescriptions.value[index] = false
-    })
+    loading.value = false
   })
 })
 
@@ -227,27 +247,23 @@ const clearFilters = () => {
 }
 
 const handleImageError = (event) => {
-  event.target.src = 'https://via.placeholder.com/400x300?text=No+Image'
+  if (event.target.src !== 'https://via.placeholder.com/400x300?text=No+Image') {
+    event.target.src = 'https://via.placeholder.com/400x300?text=No+Image'
+  }
 }
 
 const addToCart = (product) => {
-  cartStore.addToCart({
-    id: product.id,
-    name: product.title,
-    priceValue: product.price,
-    image: product.img,
-    quantity: 1
-  })
+  if (!product || !product.id) return
 
-  // Show notification
-  showNotification(`${product.title} added to cart!`)
+  cartStore.addToCart(product)
+  showNotification(`${product.title || 'Product'} added to cart!`)
 }
 
 const showNotification = (message) => {
-  // Create temporary notification
   const notification = document.createElement('div')
-  notification.className = 'position-fixed top-0 end-0 m-4 p-3 bg-success text-white rounded shadow-lg z-3'
+  notification.className = 'position-fixed top-0 end-0 m-4 p-3 bg-success text-white rounded shadow-lg'
   notification.style.zIndex = '1050'
+  notification.style.animation = 'slideIn 0.3s ease'
   notification.innerHTML = `
     <div class="d-flex align-items-center">
       <i class="bi bi-check-circle-fill me-2"></i>
@@ -257,8 +273,9 @@ const showNotification = (message) => {
   document.body.appendChild(notification)
 
   setTimeout(() => {
-    notification.remove()
-  }, 3000)
+    notification.style.animation = 'fadeOut 0.3s ease'
+    setTimeout(() => notification.remove(), 300)
+  }, 2700)
 }
 
 const shouldShowReadMore = (description) => {
@@ -267,8 +284,8 @@ const shouldShowReadMore = (description) => {
   return description.length > 100
 }
 
-const toggleDescription = (index) => {
-  expandedDescriptions.value[index] = !expandedDescriptions.value[index]
+const toggleDescription = (productId) => {
+  expandedDescriptions.value[productId] = !expandedDescriptions.value[productId]
 }
 </script>
 
@@ -297,10 +314,7 @@ const toggleDescription = (index) => {
   height: 100%;
   object-fit: cover;
   transition: transform 0.5s ease;
-  /* Skeleton loading effect */
-  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-  background-size: 200% 100%;
-  animation: loading 1.5s infinite;
+  cursor: pointer;
 }
 
 .product-card:hover .product-image {
@@ -346,10 +360,15 @@ const toggleDescription = (index) => {
 .card-title {
   display: -webkit-box;
   -webkit-line-clamp: 2;
-  line-clamp: 2; /* خاصية قياسية */
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
   min-height: 3em;
+  transition: color 0.3s ease;
+}
+
+.card-title:hover {
+  color: #0d6efd !important;
 }
 
 .description-text {
@@ -406,21 +425,6 @@ const toggleDescription = (index) => {
   .product-image-wrapper {
     height: 160px;
   }
-}
-
-/* Skeleton loading animation */
-@keyframes loading {
-  0% {
-    background-position: 200% 0;
-  }
-  100% {
-    background-position: -200% 0;
-  }
-}
-
-/* Notification animation */
-.custom-notification {
-  animation: slideIn 0.3s ease, fadeOut 0.3s ease 2.7s;
 }
 
 @keyframes slideIn {

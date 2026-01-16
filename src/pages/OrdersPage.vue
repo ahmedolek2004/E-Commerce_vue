@@ -1,7 +1,6 @@
 <template>
   <div class="container py-5">
     <div class="row">
-      <!-- Sidebar (Same as Profile) -->
       <div class="col-lg-3 mb-5 mb-lg-0">
         <div class="card border-0 shadow-sm">
           <div class="card-body p-4">
@@ -55,9 +54,7 @@
         </div>
       </div>
 
-      <!-- Main Content -->
       <div class="col-lg-9">
-        <!-- Orders Header -->
         <div class="card border-0 shadow-sm mb-4">
           <div class="card-body p-4">
             <div class="d-flex justify-content-between align-items-center mb-4">
@@ -80,7 +77,6 @@
               </div>
             </div>
 
-            <!-- Orders Stats -->
             <div class="row g-3 mb-4">
               <div class="col-6 col-md-3">
                 <div class="card border-0 bg-primary bg-opacity-10">
@@ -118,10 +114,8 @@
           </div>
         </div>
 
-        <!-- Orders List -->
         <div class="card border-0 shadow-sm">
           <div class="card-body p-0">
-            <!-- Loading State -->
             <div v-if="loading" class="text-center py-5">
               <div class="spinner-border text-primary" role="status">
                 <span class="visually-hidden">Loading...</span>
@@ -129,7 +123,6 @@
               <p class="mt-3 text-muted">Loading your orders...</p>
             </div>
 
-            <!-- No Orders -->
             <div v-else-if="filteredOrders.length === 0" class="text-center py-5">
               <div class="mb-4">
                 <i class="bi bi-bag-x display-1 text-muted opacity-50"></i>
@@ -143,7 +136,6 @@
               </RouterLink>
             </div>
 
-            <!-- Orders Table -->
             <div v-else class="table-responsive">
               <table class="table table-hover mb-0">
                 <thead class="table-light">
@@ -226,7 +218,6 @@
           </div>
         </div>
 
-        <!-- Order Details Modal -->
         <div v-if="selectedOrder" class="modal fade show d-block" style="background: rgba(0,0,0,0.5)">
           <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
@@ -235,7 +226,6 @@
                 <button type="button" class="btn-close" @click="selectedOrder = null"></button>
               </div>
               <div class="modal-body">
-                <!-- Order Summary -->
                 <div class="row mb-4">
                   <div class="col-md-6">
                     <h6 class="fw-semibold mb-3">Order Information</h6>
@@ -291,7 +281,6 @@
                   </div>
                 </div>
 
-                <!-- Order Items -->
                 <h6 class="fw-semibold mb-3">Order Items</h6>
                 <div class="table-responsive">
                   <table class="table table-sm">
@@ -329,7 +318,6 @@
                   </table>
                 </div>
 
-                <!-- Order Total -->
                 <div class="row justify-content-end mt-4">
                   <div class="col-md-6">
                     <table class="table table-sm">
@@ -560,9 +548,8 @@ const cancelOrder = (order) => {
   }
 }
 
-const reorder = () => {
+const reorder = (order) => {
   if (confirm('Add all items from this order to cart?')) {
-    // Add to cart logic here
     showNotification('Items added to cart successfully!', 'success')
   }
 }
@@ -576,7 +563,6 @@ const refreshOrders = () => {
 }
 
 const showNotification = (message) => {
-  // You can implement a toast notification system here
   alert(message)
 }
 </script>

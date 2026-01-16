@@ -45,7 +45,6 @@
         </div>
       </div>
 
-      <!-- Stats -->
       <div class="container mt-5 pt-5">
         <div class="row g-4 text-center">
           <div class="col-md-3 col-6">
@@ -53,7 +52,7 @@
               <div class="stat-icon mb-3">
                 <i class="bi bi-box-seam display-6 text-primary"></i>
               </div>
-              <h3 class="fw-bold">500+</h3>
+              <h3 class="fw-bold">{{ stats.products }}+</h3>
               <p class="text-muted mb-0">Products</p>
             </div>
           </div>
@@ -62,7 +61,7 @@
               <div class="stat-icon mb-3">
                 <i class="bi bi-people display-6 text-success"></i>
               </div>
-              <h3 class="fw-bold">10K+</h3>
+              <h3 class="fw-bold">{{ stats.customers }}+</h3>
               <p class="text-muted mb-0">Customers</p>
             </div>
           </div>
@@ -71,7 +70,7 @@
               <div class="stat-icon mb-3">
                 <i class="bi bi-truck display-6 text-warning"></i>
               </div>
-              <h3 class="fw-bold">24hr</h3>
+              <h3 class="fw-bold">{{ stats.delivery }}</h3>
               <p class="text-muted mb-0">Delivery</p>
             </div>
           </div>
@@ -80,7 +79,7 @@
               <div class="stat-icon mb-3">
                 <i class="bi bi-star display-6 text-info"></i>
               </div>
-              <h3 class="fw-bold">4.8</h3>
+              <h3 class="fw-bold">{{ stats.rating }}</h3>
               <p class="text-muted mb-0">Rating</p>
             </div>
           </div>
@@ -88,7 +87,6 @@
       </div>
     </section>
 
-    <!-- Main Slider -->
     <section class="slider-section py-5">
       <div class="container">
         <div class="d-flex justify-content-between align-items-center mb-4">
@@ -100,61 +98,38 @@
           </RouterLink>
         </div>
 
-        <div id="mainSlider" class="carousel slide" data-bs-ride="carousel">
-          <div class="carousel-inner">
-            <!-- Slide 1 -->
-            <div class="carousel-item active">
-              <div class="row g-4">
-                <div class="col-md-6">
-                  <div class="slider-card featured-card bg-dark text-white rounded-4 overflow-hidden">
-                    <img src="/images/2.png" alt="Electronics" class="img-fluid w-100 h-100 object-fit-cover" />
-                    <div class="overlay-content p-5">
-                      <h3 class="fw-bold mb-3">Electronics Collection</h3>
-                      <p class="mb-4">Latest gadgets & smart devices</p>
-                      <RouterLink to="/category/electronics" class="btn btn-light">
-                        Shop Electronics
-                      </RouterLink>
-                    </div>
-                  </div>
-                </div>
-                <div class="col-md-6">
-                  <div class="slider-card featured-card bg-primary text-white rounded-4 overflow-hidden">
-                    <img src="/images/3.png" alt="Books" class="img-fluid w-100 h-100 object-fit-cover" />
-                    <div class="overlay-content p-5">
-                      <h3 class="fw-bold mb-3">Books & Education</h3>
-                      <p class="mb-4">Knowledge for everyone</p>
-                      <RouterLink to="/category/books" class="btn btn-light">
-                        Explore Books
-                      </RouterLink>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+        <div v-if="categories.length === 0" class="text-center py-5">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+          <p class="mt-3 text-muted">Loading categories...</p>
+        </div>
 
-            <!-- Slide 2 -->
-            <div class="carousel-item">
+        <div v-else-if="carouselCategories.length > 0" id="mainSlider" class="carousel slide" data-bs-ride="carousel">
+          <div class="carousel-inner">
+            <div
+              v-for="(slide, slideIndex) in Math.ceil(carouselCategories.length / 2)"
+              :key="slideIndex"
+              :class="['carousel-item', { active: slideIndex === 0 }]"
+            >
               <div class="row g-4">
-                <div class="col-md-6">
-                  <div class="slider-card featured-card bg-success text-white rounded-4 overflow-hidden">
-                    <img src="/images/4.png" alt="Fashion" class="img-fluid w-100 h-100 object-fit-cover" />
+                <div
+                  v-for="category in carouselCategories.slice(slideIndex * 2, slideIndex * 2 + 2)"
+                  :key="category.id"
+                  class="col-md-6"
+                >
+                  <div class="slider-card featured-card rounded-4 overflow-hidden position-relative">
+                    <img
+                      :src="category.image || '/images/2.png'"
+                      :alt="category.name"
+                      class="img-fluid w-100 h-100 object-fit-cover"
+                      @error="handleImageError"
+                    />
                     <div class="overlay-content p-5">
-                      <h3 class="fw-bold mb-3">Fashion & Style</h3>
-                      <p class="mb-4">Trendy outfits for everyone</p>
-                      <RouterLink to="/category/fashion" class="btn btn-light">
-                        Shop Fashion
-                      </RouterLink>
-                    </div>
-                  </div>
-                </div>
-                <div class="col-md-6">
-                  <div class="slider-card featured-card bg-warning text-white rounded-4 overflow-hidden">
-                    <img src="/images/5.png" alt="Toys" class="img-fluid w-100 h-100 object-fit-cover" />
-                    <div class="overlay-content p-5">
-                      <h3 class="fw-bold mb-3">Toys & Games</h3>
-                      <p class="mb-4">Fun for all ages</p>
-                      <RouterLink to="/category/toys" class="btn btn-light">
-                        Explore Toys
+                      <h3 class="fw-bold mb-3 text-white">{{ category.name }}</h3>
+                      <p class="mb-4 text-white">{{ category.description || 'Explore our collection' }}</p>
+                      <RouterLink :to="`/categories/${category.id}`" class="btn btn-light">
+                        Shop {{ category.name }}
                       </RouterLink>
                     </div>
                   </div>
@@ -163,17 +138,31 @@
             </div>
           </div>
 
-          <button class="carousel-control-prev" type="button" data-bs-target="#mainSlider" data-bs-slide="prev">
+          <button
+            v-if="carouselCategories.length > 2"
+            class="carousel-control-prev"
+            type="button"
+            data-bs-target="#mainSlider"
+            data-bs-slide="prev"
+          >
             <span class="carousel-control-prev-icon"></span>
           </button>
-          <button class="carousel-control-next" type="button" data-bs-target="#mainSlider" data-bs-slide="next">
+          <button
+            v-if="carouselCategories.length > 2"
+            class="carousel-control-next"
+            type="button"
+            data-bs-target="#mainSlider"
+            data-bs-slide="next"
+          >
             <span class="carousel-control-next-icon"></span>
           </button>
+        </div>
+        <div v-else class="alert alert-info">
+          <p class="mb-0">No categories available yet.</p>
         </div>
       </div>
     </section>
 
-    <!-- Featured Products -->
     <section class="featured-products py-5 bg-light">
       <div class="container">
         <div class="text-center mb-5">
@@ -181,23 +170,30 @@
           <p class="text-muted lead">Handpicked selection of our best products</p>
         </div>
 
-        <div class="row g-4">
-          <div class="col-xl-3 col-lg-4 col-md-6" v-for="(product, index) in featured" :key="index">
+        <div v-if="products.length === 0" class="text-center py-5">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+          <p class="mt-3 text-muted">Loading products...</p>
+        </div>
+
+        <div v-else-if="featured.length > 0" class="row g-4">
+          <div class="col-xl-3 col-lg-4 col-md-6" v-for="product in featured" :key="product.id">
             <div class="card product-card border-0 shadow-sm h-100 overflow-hidden">
               <div class="product-image-wrapper position-relative">
-                <img :src="product.img" :alt="product.title" class="card-img-top" />
+                <img :src="product.img || '/placeholder.jpg'" :alt="product.title" class="card-img-top" />
                 <div class="product-overlay">
-                  <button class="btn btn-primary btn-sm">
+                  <button class="btn btn-primary btn-sm" @click="handleQuickView(product)">
                     <i class="bi bi-eye me-1"></i>Quick View
                   </button>
                 </div>
               </div>
               <div class="card-body d-flex flex-column">
                 <h5 class="card-title fw-semibold">{{ product.title }}</h5>
-                <p class="card-text text-muted small flex-grow-1">{{ product.desc }}</p>
+                <p class="card-text text-muted small flex-grow-1">{{ product.desc || 'No description available' }}</p>
                 <div class="d-flex justify-content-between align-items-center mt-3">
-                  <span class="h5 fw-bold text-primary mb-0">${{ 99 + index * 50 }}</span>
-                  <RouterLink to="/products" class="btn btn-outline-primary btn-sm">
+                  <span class="h5 fw-bold text-primary mb-0">{{ formatPrice(product.price) }} EGP</span>
+                  <RouterLink :to="`/products/${product.id}`" class="btn btn-outline-primary btn-sm">
                     View Details
                   </RouterLink>
                 </div>
@@ -205,10 +201,12 @@
             </div>
           </div>
         </div>
+        <div v-else class="text-center py-5">
+          <p class="text-muted">No featured products available yet.</p>
+        </div>
       </div>
     </section>
 
-    <!-- Hot Deals -->
     <section class="hot-deals py-5 position-relative overflow-hidden">
       <div class="container position-relative z-1">
         <div class="d-flex justify-content-between align-items-center mb-5">
@@ -218,43 +216,52 @@
             </h2>
             <p class="text-muted mb-0">Limited time offers - Don't miss out!</p>
           </div>
-          <div class="countdown bg-danger text-white px-4 py-2 rounded-pill">
-            <i class="bi bi-clock me-2"></i>Offer ends in: 24:59:59
+          <div v-if="deals.length > 0" class="countdown bg-danger text-white px-4 py-2 rounded-pill">
+            <i class="bi bi-fire me-2"></i>{{ deals.length }} Hot Deal{{ deals.length !== 1 ? 's' : '' }} Available
           </div>
         </div>
 
-        <div class="row g-4">
-          <div class="col-lg-4 col-md-6" v-for="(deal, index) in deals" :key="index">
+        <div v-if="deals.length === 0" class="text-center py-5">
+          <p class="text-muted">Loading deals...</p>
+        </div>
+
+        <div v-if="deals.length > 0" class="row g-4">
+          <div class="col-lg-4 col-md-6" v-for="deal in deals.slice(0, 3)" :key="deal.id">
             <div class="card deal-card border-0 shadow-lg h-100 overflow-hidden">
-              <div class="deal-badge">-50%</div>
+              <div class="deal-badge">
+                -{{ getDiscountPercentage(deal.originalPrice, deal.discountPrice) }}%
+              </div>
               <div class="deal-image-wrapper">
-                <img :src="deal.img" :alt="deal.title" class="card-img-top" />
+                <img :src="deal.image || '/placeholder.jpg'" :alt="deal.title" class="card-img-top" />
               </div>
               <div class="card-body">
                 <h5 class="card-title fw-bold">{{ deal.title }}</h5>
-                <p class="card-text text-muted">{{ deal.desc }}</p>
+                <p class="card-text text-muted">{{ deal.description || 'Limited time offer!' }}</p>
                 <div class="d-flex align-items-center mb-3">
-                  <span class="h4 fw-bold text-danger me-2">${{ 49 + index * 20 }}</span>
-                  <span class="text-decoration-line-through text-muted">${{ 99 + index * 40 }}</span>
+                  <span class="h4 fw-bold text-danger me-2">{{ formatPrice(deal.discountPrice) }} EGP</span>
+                  <span class="text-decoration-line-through text-muted">{{ formatPrice(deal.originalPrice) }} EGP</span>
                 </div>
-                <div class="progress mb-3" style="height: 8px;">
-                  <div class="progress-bar bg-danger" :style="{ width: `${70 - index * 10}%` }"></div>
-                </div>
-                <p class="text-muted small mb-3">
-                  <i class="bi bi-exclamation-circle me-1"></i>
-                  Only {{ 15 - index * 3 }} left in stock
+                <p class="text-muted small mb-3" v-if="deal.validUntil">
+                  <i class="bi bi-clock me-1"></i>
+                  Valid until {{ deal.validUntil }}
                 </p>
-                <RouterLink to="/deals" class="btn btn-danger w-100 py-3 fw-semibold">
+                <RouterLink
+                  :to="deal.productId ? `/products/${deal.productId}` : '/deals'"
+                  class="btn btn-danger w-100 py-3 fw-semibold"
+                >
                   <i class="bi bi-bag-check me-2"></i>Grab This Deal
                 </RouterLink>
               </div>
             </div>
           </div>
         </div>
+        <div v-else class="text-center py-5">
+          <p class="text-muted">No deals available at the moment.</p>
+          <RouterLink to="/products" class="btn btn-primary">Browse Products</RouterLink>
+        </div>
       </div>
     </section>
 
-    <!-- Newsletter -->
     <section class="newsletter py-5">
       <div class="container">
         <div class="row justify-content-center">
@@ -268,8 +275,18 @@
                   and special offers directly to your inbox.
                 </p>
                 <div class="input-group input-group-lg mb-3">
-                  <input type="email" class="form-control" placeholder="Enter your email" />
-                  <button class="btn btn-light text-primary fw-semibold" type="button">
+                  <input
+                    v-model="newsletterEmail"
+                    type="email"
+                    class="form-control"
+                    placeholder="Enter your email"
+                    @keyup.enter="handleNewsletterSubscribe"
+                  />
+                  <button
+                    class="btn btn-light text-primary fw-semibold"
+                    type="button"
+                    @click="handleNewsletterSubscribe"
+                  >
                     Subscribe
                   </button>
                 </div>
@@ -287,49 +304,96 @@
 </template>
 
 <script setup>
-import "@/assets/global.css";
-import { RouterLink } from "vue-router";
+import { ref, computed, onMounted } from "vue"
+import { RouterLink, useRouter } from "vue-router"
+import { db } from "../firebase"
+import { collection, onSnapshot } from "firebase/firestore"
 
-const featured = [
-  {
-    title: "Smart Watch Series 8",
-    desc: "Advanced health monitoring, 24/7 heart rate tracking, sleep analysis, and seamless connectivity",
-    img: "/images/product40.png"
-  },
-  {
-    title: "Noise Cancelling Headphones",
-    desc: "Premium sound quality with active noise cancellation and 30-hour battery life",
-    img: "/images/product47.png"
-  },
-  {
-    title: "Premium Sneakers",
-    desc: "Comfortable athletic shoes with superior cushioning and stylish design",
-    img: "/images/product46.png"
-  },
-  {
-    title: "Gaming Laptop Pro",
-    desc: "High-performance laptop with RTX graphics for ultimate gaming experience",
-    img: "/images/product34.png"
-  },
-];
+const router = useRouter()
 
-const deals = [
-  {
-    title: "Premium Smartphones",
-    desc: "Latest models with 50% discount. Limited stock available!",
-    img: "/images/1.png",
-  },
-  {
-    title: "Fashion Collection",
-    desc: "Buy 1 Get 1 Free on selected items. Limited time offer!",
-    img: "/images/product26.png"
-  },
-  {
-    title: "4K Smart TV",
-    desc: "Save up to 30% on premium smart TVs with 3-year warranty",
-    img: "/images/product41.png"
-  },
-];
+const products = ref([])
+const deals = ref([])
+const categories = ref([])
+const stats = ref({
+  products: 0,
+  customers: 0,
+  delivery: "24hr",
+  rating: "4.8"
+})
+const newsletterEmail = ref("")
+
+onMounted(() => {
+  onSnapshot(collection(db, "products"), (snapshot) => {
+    products.value = snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }))
+    stats.value.products = snapshot.size
+  })
+
+  onSnapshot(collection(db, "deals"), (snapshot) => {
+    deals.value = snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }))
+  })
+
+  onSnapshot(collection(db, "categories"), (snapshot) => {
+    categories.value = snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }))
+  })
+
+  onSnapshot(collection(db, "users"), (snapshot) => {
+    stats.value.customers = snapshot.size
+  })
+})
+
+const featured = computed(() => {
+  return products.value.slice(0, 4)
+})
+
+const carouselCategories = computed(() => {
+  return categories.value.slice(0, 4)
+})
+
+const formatPrice = (price) => {
+  return new Intl.NumberFormat('en-EG').format(price || 0)
+}
+
+const handleQuickView = (product) => {
+  router.push(`/products/${product.id}`)
+}
+
+const showNotification = (message) => {
+  const notification = document.createElement('div')
+  notification.className = 'position-fixed top-0 end-0 m-4 p-3 bg-success text-white rounded shadow-lg'
+  notification.style.zIndex = '1050'
+  notification.innerHTML = `
+    <div class="d-flex align-items-center">
+      <i class="bi bi-check-circle-fill me-2"></i>
+      <span>${message}</span>
+    </div>
+  `
+  document.body.appendChild(notification)
+  setTimeout(() => notification.remove(), 3000)
+}
+
+const handleNewsletterSubscribe = () => {
+  if (!newsletterEmail.value) return
+  showNotification("Thank you for subscribing!")
+  newsletterEmail.value = ""
+}
+
+const getDiscountPercentage = (originalPrice, discountPrice) => {
+  if (!originalPrice || !discountPrice) return 0
+  return Math.round(((originalPrice - discountPrice) / originalPrice) * 100)
+}
+
+const handleImageError = (event) => {
+  event.target.src = '/images/2.png'
+}
 </script>
 <style scoped>
 .hero-section {

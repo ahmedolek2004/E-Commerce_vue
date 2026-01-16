@@ -1,15 +1,12 @@
 <template>
-  <!-- Main Navbar -->
   <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-lg sticky-top">
     <div class="container px-3 px-lg-4">
 
-      <!-- Logo and Brand -->
       <RouterLink class="navbar-brand d-flex align-items-center" to="/">
         <i class="bi bi-shop-window fs-2 me-2"></i>
         <span class="fw-bold fs-4 d-none d-md-inline">Shop<span class="text-warning">Hub</span></span>
       </RouterLink>
 
-      <!-- Mobile Search Toggle -->
       <button
         class="btn btn-outline-light d-lg-none me-2"
         @click="toggleMobileSearch"
@@ -18,7 +15,6 @@
         <i class="bi bi-search"></i>
       </button>
 
-      <!-- Mobile Cart Toggle -->
       <RouterLink
         class="btn btn-outline-light d-lg-none me-2 position-relative"
         to="/cart"
@@ -33,7 +29,6 @@
         </span>
       </RouterLink>
 
-      <!-- Mobile Menu Toggle -->
       <button
         class="navbar-toggler border-0"
         type="button"
@@ -44,7 +39,6 @@
         <span class="navbar-toggler-icon"></span>
       </button>
 
-      <!-- Desktop Navigation -->
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav mx-auto">
           <li class="nav-item">
@@ -109,7 +103,6 @@
           </li>
         </ul>
 
-        <!-- Desktop Search Bar -->
         <div class="d-none d-lg-flex align-items-center" style="max-width: 400px;">
           <div class="input-group search-group">
             <input
@@ -125,7 +118,6 @@
           </div>
         </div>
 
-        <!-- Desktop Right Icons -->
         <ul class="navbar-nav d-none d-lg-flex">
           <li class="nav-item dropdown">
             <RouterLink
@@ -144,7 +136,6 @@
             </RouterLink>
           </li>
 
-          <!-- Account Dropdown - Dynamic based on auth state -->
           <li class="nav-item dropdown">
             <a
               class="nav-link d-flex flex-column align-items-center mx-2 dropdown-toggle"
@@ -158,7 +149,6 @@
               </span>
             </a>
             <ul class="dropdown-menu dropdown-menu-end shadow border-0">
-              <!-- If user is logged in -->
               <template v-if="currentUser">
                 <li>
                   <div class="dropdown-item-text px-3 py-2">
@@ -196,7 +186,6 @@
                 </li>
               </template>
 
-              <!-- If user is not logged in -->
               <template v-else>
                 <li>
                   <RouterLink class="dropdown-item" to="/auth" @click="closeMobileMenu">
@@ -226,7 +215,6 @@
       </div>
     </div>
 
-    <!-- Mobile Search Bar -->
     <div
       v-if="mobileSearchOpen"
       class="bg-light py-3 d-lg-none border-top"
@@ -252,7 +240,6 @@
       </div>
     </div>
 
-    <!-- Mobile Menu (Offcanvas) -->
     <div
       class="mobile-menu-overlay"
       :class="{ 'show': mobileMenuOpen }"
@@ -263,7 +250,6 @@
       class="mobile-menu"
       :class="{ 'show': mobileMenuOpen }"
     >
-      <!-- Mobile Menu Header -->
       <div class="mobile-menu-header bg-primary text-white p-4">
         <div class="d-flex justify-content-between align-items-center">
           <h5 class="mb-0">
@@ -274,7 +260,6 @@
           </button>
         </div>
 
-        <!-- User Info in Mobile Menu -->
         <div class="mt-3 d-flex align-items-center">
           <i class="bi" :class="currentUser ? 'bi-person-check' : 'bi-person-circle'"></i>
           <div class="ms-3">
@@ -288,7 +273,6 @@
         </div>
       </div>
 
-      <!-- Mobile Menu Items -->
       <div class="mobile-menu-body">
         <div class="list-group list-group-flush">
           <RouterLink
@@ -334,7 +318,6 @@
             <span class="badge bg-primary float-end">{{ cartStore.cartCount }}</span>
           </RouterLink>
 
-          <!-- Dynamic User Links -->
           <template v-if="currentUser">
             <RouterLink
               class="list-group-item list-group-item-action border-0 py-3"
@@ -397,7 +380,6 @@
         </div>
       </div>
 
-      <!-- Mobile Menu Footer -->
       <div class="mobile-menu-footer border-top p-3">
         <div class="text-center">
           <small class="text-muted">© 2024 ShopHub. All rights reserved.</small>
@@ -418,8 +400,7 @@ import { RouterLink, useRouter } from "vue-router"
 import { useCartStore } from "../stores/cart"
 import { auth } from "../firebase"
 import { onAuthStateChanged, signOut } from "firebase/auth"
-import { db } from "../firebase"
-import { doc, getDoc } from "firebase/firestore"
+import { checkAdminRole } from "../utils/admin"
 
 const router = useRouter()
 const cartStore = useCartStore()
@@ -428,12 +409,8 @@ const mobileMenuOpen = ref(false)
 const mobileSearchOpen = ref(false)
 const mobileSearchInput = ref(null)
 
-// Auth state
 const currentUser = ref(null)
 const isAdmin = ref(false)
-
-// قائمة الإيميلات المسموحة كأدمن
-const adminEmails = ['admin@example.com', 'ahmed@example.com', 'test@test.com']
 
 const goSearch = () => {
   if (searchQuery.value.trim() !== "") {
@@ -460,7 +437,6 @@ const closeMobileMenu = () => {
 const toggleMobileSearch = async () => {
   mobileSearchOpen.value = !mobileSearchOpen.value
   if (mobileSearchOpen.value) {
-    // استخدام setTimeout بدلاً من nextTick
     setTimeout(() => {
       mobileSearchInput.value?.focus()
     }, 100)
@@ -470,56 +446,25 @@ const closeMobileSearch = () => {
   mobileSearchOpen.value = false
 }
 
-// Load user role
-const loadUserRole = async (uid) => {
-  try {
-    if (!uid) return
-
-    const snap = await getDoc(doc(db, "users", uid))
-    if (snap.exists()) {
-      const userData = snap.data()
-      isAdmin.value = userData.role === "admin"
-    }
-
-    // بالإضافة للتحقق من قاعدة البيانات، تحقق من قائمة الإيميلات
-    if (currentUser.value && adminEmails.includes(currentUser.value.email)) {
-      isAdmin.value = true
-    }
-  } catch (error) {
-    console.error("Error loading user role:", error)
-    isAdmin.value = false
-  }
-}
-
-// Logout function
 const handleLogout = async () => {
   try {
     await signOut(auth)
     currentUser.value = null
     isAdmin.value = false
     closeMobileMenu()
-    alert("✅ Logged out successfully!")
     router.push("/auth")
   } catch (error) {
     console.error("Logout error:", error)
-    alert("❌ Logout failed: " + error.message)
   }
 }
 
-// Track auth state
 onMounted(() => {
   onAuthStateChanged(auth, async (user) => {
     currentUser.value = user
-
-    if (user) {
-      await loadUserRole(user.uid)
-    } else {
-      isAdmin.value = false
-    }
+    isAdmin.value = user ? await checkAdminRole(user) : false
   })
 })
 
-// Close menu when clicking outside on mobile
 document.addEventListener('click', (event) => {
   const mobileMenu = document.querySelector('.mobile-menu')
   const navbarToggler = document.querySelector('.navbar-toggler')

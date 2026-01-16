@@ -1,6 +1,5 @@
 <template>
   <div class="container py-5">
-    <!-- Loading State -->
     <div v-if="!product && !error" class="text-center py-5">
       <div class="spinner-border text-primary" role="status">
         <span class="visually-hidden">Loading...</span>
@@ -8,7 +7,6 @@
       <p class="mt-3 text-muted">Loading product details...</p>
     </div>
 
-    <!-- Product Not Found -->
     <div v-else-if="error || !product" class="text-center py-5">
       <div class="mb-4">
         <i class="bi bi-exclamation-triangle display-1 text-danger"></i>
@@ -20,9 +18,7 @@
       </RouterLink>
     </div>
 
-    <!-- Product Details -->
     <div v-else class="row g-5">
-      <!-- Product Images -->
       <div class="col-lg-7">
         <div class="card border-0 shadow-sm rounded-3 overflow-hidden">
           <div class="product-image-container p-3 bg-light">
@@ -37,26 +33,21 @@
         </div>
       </div>
 
-      <!-- Product Info -->
       <div class="col-lg-5">
         <div class="d-flex flex-column h-100">
-          <!-- Category Badge -->
           <div class="mb-3">
             <span class="badge bg-primary fs-6">
               {{ product.categoryName || 'Uncategorized' }}
             </span>
           </div>
 
-          <!-- Product Title -->
           <h1 class="fw-bold mb-3">{{ product.title }}</h1>
 
-          <!-- Product Description -->
           <div class="mb-4">
             <h5 class="text-muted mb-2">Description</h5>
             <p class="lead" style="line-height: 1.8;">{{ product.desc }}</p>
           </div>
 
-          <!-- Price -->
           <div class="mb-4">
             <h5 class="text-muted mb-2">Price</h5>
             <div class="d-flex align-items-center">
@@ -69,14 +60,12 @@
             </div>
           </div>
 
-          <!-- Stock Status -->
           <div class="mb-4">
             <span class="badge bg-success fs-6">
               <i class="bi bi-check-circle me-1"></i>In Stock
             </span>
           </div>
 
-          <!-- Action Buttons -->
           <div class="mt-auto">
             <div class="d-grid gap-3">
               <button
@@ -101,7 +90,6 @@
             </div>
           </div>
 
-          <!-- Additional Info -->
           <div class="mt-5 pt-4 border-top">
             <div class="row text-center">
               <div class="col-4">
@@ -172,25 +160,42 @@ const handleImageError = (event) => {
   event.target.src = 'https://via.placeholder.com/800x600?text=Product+Image'
 }
 
-const handleAddToCart = () => {
+const handleAddToCart = (event) => {
   if (!product.value) return
 
   cartStore.addToCart(product.value)
 
-  // Show success feedback (you can use a toast notification here)
-  const button = event?.target
+  const button = event?.target?.closest('button')
   if (button) {
     const originalText = button.innerHTML
     button.innerHTML = '<i class="bi bi-check-circle me-2"></i>Added to Cart'
     button.classList.remove('btn-primary')
     button.classList.add('btn-success')
+    button.disabled = true
 
     setTimeout(() => {
       button.innerHTML = originalText
       button.classList.remove('btn-success')
       button.classList.add('btn-primary')
+      button.disabled = false
     }, 2000)
   }
+
+  showNotification(`${product.value.title} added to cart!`)
+}
+
+const showNotification = (message) => {
+  const notification = document.createElement('div')
+  notification.className = 'position-fixed top-0 end-0 m-4 p-3 bg-success text-white rounded shadow-lg'
+  notification.style.zIndex = '1050'
+  notification.innerHTML = `
+    <div class="d-flex align-items-center">
+      <i class="bi bi-check-circle-fill me-2"></i>
+      <span>${message}</span>
+    </div>
+  `
+  document.body.appendChild(notification)
+  setTimeout(() => notification.remove(), 3000)
 }
 
 const handleBuyNow = () => {
@@ -265,13 +270,11 @@ const handleBuyNow = () => {
   }
 }
 
-/* Loading animation */
 .spinner-border {
   width: 3rem;
   height: 3rem;
 }
 
-/* Smooth transitions */
 .product-image-container {
   transition: background-color 0.3s ease;
 }

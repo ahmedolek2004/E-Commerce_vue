@@ -1,7 +1,6 @@
 <template>
   <div class="admin-products">
 
-    <!--  Add Product -->
     <div class="card form-card">
       <h4 class="fw-semibold mb-3">Add New Product</h4>
 
@@ -31,7 +30,6 @@
       </form>
     </div>
 
-    <!--  Products Table -->
     <div class="card table-card">
       <h4 class="fw-semibold mb-3">All Products</h4>
 
@@ -64,7 +62,6 @@
       </div>
     </div>
 
-    <!--  Edit Product -->
     <div v-if="editingProduct" class="card form-card">
       <h5 class="fw-semibold mb-3">Edit Product</h5>
 
@@ -108,7 +105,6 @@ import {
   serverTimestamp,
 } from "firebase/firestore"
 
-/*  PRODUCTS */
 const products = ref([])
 
 const pTitle = ref("")
@@ -123,7 +119,6 @@ const fetchProducts = () => {
   })
 }
 
-/*  CATEGORIES */
 const categories = ref([])
 
 const fetchCategories = () => {
@@ -152,7 +147,6 @@ const addProduct = async () => {
   pDesc.value = ""
 }
 
-/*  Edit Product */
 const editingProduct = ref(null)
 
 const editTitle = ref("")
@@ -206,7 +200,6 @@ onMounted(() => {
   gap: 30px;
 }
 
-/*  Card */
 .card {
   background: #fff;
   border: 1px solid #ddd;
@@ -214,7 +207,6 @@ onMounted(() => {
   padding: 20px;
 }
 
-/*  Form Layout */
 .form-card h4,
 .form-card h5 {
   margin-bottom: 15px;
@@ -237,7 +229,6 @@ onMounted(() => {
   min-height: 100px;
 }
 
-/*  Table */
 .table-wrapper {
   overflow-x: auto;
   max-height: 70vh;
@@ -262,7 +253,6 @@ onMounted(() => {
   color: white;
 }
 
-/*  Buttons */
 .btn-sm {
   padding: 6px 12px;
   font-size: 0.85rem;

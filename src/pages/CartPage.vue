@@ -1,5 +1,4 @@
 <script setup>
-
 import { useCartStore } from "../stores/cart"
 import { RouterLink } from "vue-router"
 
@@ -35,7 +34,6 @@ const handleQuantityChange = (itemId, quantity) => {
           </span>
         </div>
 
-        <!-- Empty cart state -->
         <div v-if="cartStore.cart.length === 0" class="text-center py-5">
           <div class="mb-4">
             <i class="bi bi-cart-x display-1 text-muted"></i>
@@ -47,9 +45,7 @@ const handleQuantityChange = (itemId, quantity) => {
           </RouterLink>
         </div>
 
-        <!-- Cart with items -->
         <div v-else>
-          <!-- Desktop table -->
           <div class="table-responsive d-none d-md-block">
             <table class="table align-middle">
               <thead class="table-light">
@@ -135,7 +131,6 @@ const handleQuantityChange = (itemId, quantity) => {
             </table>
           </div>
 
-          <!-- Mobile cards -->
           <div class="d-md-none">
             <div v-for="item in cartStore.cart" :key="item.id" class="card mb-3 border">
               <div class="card-body">
@@ -201,7 +196,6 @@ const handleQuantityChange = (itemId, quantity) => {
             </div>
           </div>
 
-          <!-- Cart summary -->
           <div class="card border-0 bg-light mt-4">
             <div class="card-body p-4">
               <div class="row">

@@ -2,12 +2,10 @@
   <div class="container py-5">
     <h1 class="mb-4">Hot Deals</h1>
 
-    <!-- لو مفيش عروض -->
     <div v-if="deals.length === 0" class="alert alert-info">
       No deals available at the moment.
     </div>
 
-    <!-- شبكة العروض -->
     <div class="row">
       <div class="col-md-4 mb-4" v-for="deal in deals" :key="deal.id">
         <div class="card h-100 shadow-sm">
@@ -66,13 +64,9 @@ const formatCurrency = (value) => `$${value.toFixed(2)}`
 }
 .card-text {
   display: -webkit-box;
-  display: box; /* fallback قديم لبعض المتصفحات */
   -webkit-box-orient: vertical;
-  box-orient: vertical;
-
-  -webkit-line-clamp: 3; /* للمتصفحات المبنية على WebKit */
-  line-clamp: 2;         /* الخاصية القياسية الجديدة */
-
+  -webkit-line-clamp: 3;
+  line-clamp: 2;
   overflow: hidden;
   text-overflow: ellipsis;
   min-height: 60px;

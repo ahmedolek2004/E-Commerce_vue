@@ -1,7 +1,6 @@
 <template>
   <div class="admin-deals">
 
-    <!--  Add Deal -->
     <div class="card form-card">
       <h4 class="fw-semibold mb-3">Add New Deal</h4>
 
@@ -35,7 +34,6 @@
       </form>
     </div>
 
-    <!--  Deals Table -->
     <div class="card table-card">
       <h4 class="fw-semibold mb-3">All Deals</h4>
 
@@ -72,7 +70,6 @@
       </div>
     </div>
 
-    <!--  Edit Deal -->
     <div v-if="editingDeal" class="card form-card">
       <h5 class="fw-semibold mb-3">Edit Deal</h5>
 
@@ -120,7 +117,6 @@ import {
   serverTimestamp,
 } from "firebase/firestore"
 
-/*  DEALS */
 const deals = ref([])
 
 const dTitle = ref("")
@@ -137,7 +133,6 @@ const fetchDeals = () => {
   })
 }
 
-/*  PRODUCTS (needed for dropdown + product names) */
 const products = ref([])
 
 const fetchProducts = () => {
@@ -172,7 +167,6 @@ const addDeal = async () => {
   dImage.value = ""
 }
 
-/*  Edit Deal */
 const editingDeal = ref(null)
 
 const editDTitle = ref("")
@@ -228,7 +222,6 @@ onMounted(() => {
   gap: 30px;
 }
 
-/*  Card */
 .card {
   background: #fff;
   border: 1px solid #ddd;
@@ -236,7 +229,6 @@ onMounted(() => {
   padding: 20px;
 }
 
-/*  Form Layout */
 .form-card h4,
 .form-card h5 {
   margin-bottom: 15px;
@@ -254,7 +246,6 @@ onMounted(() => {
   border-radius: 6px;
 }
 
-/*  Table */
 .table-wrapper {
   overflow-x: auto;
   max-height: 70vh;
@@ -279,7 +270,6 @@ onMounted(() => {
   color: white;
 }
 
-/*  Buttons */
 .btn-sm {
   padding: 6px 12px;
   font-size: 0.85rem;

@@ -1,7 +1,6 @@
 <template>
   <div class="container py-5">
     <div class="row">
-      <!-- Sidebar -->
       <div class="col-lg-3 mb-5 mb-lg-0">
         <div class="card border-0 shadow-sm">
           <div class="card-body p-4">
@@ -71,9 +70,7 @@
         </div>
       </div>
 
-      <!-- Main Content -->
       <div class="col-lg-9">
-        <!-- Profile Header -->
         <div class="card border-0 shadow-sm mb-4">
           <div class="card-body p-4">
             <div class="d-flex justify-content-between align-items-center mb-4">
@@ -90,7 +87,6 @@
               </button>
             </div>
 
-            <!-- Edit Avatar Modal -->
             <div v-if="showAvatarUpload" class="modal fade show d-block" style="background: rgba(0,0,0,0.5)">
               <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
@@ -132,7 +128,6 @@
               </div>
             </div>
 
-            <!-- Profile Form -->
             <form @submit.prevent="saveProfile" class="mt-4">
               <div class="row">
                 <div class="col-md-6 mb-3">
@@ -187,7 +182,6 @@
                 </div>
               </div>
 
-              <!-- Save Button (Visible only in edit mode) -->
               <div v-if="editMode" class="d-flex justify-content-end gap-3 mt-4">
                 <button type="button" class="btn btn-outline-secondary" @click="cancelEdit">
                   Cancel
@@ -200,7 +194,6 @@
           </div>
         </div>
 
-        <!-- Account Stats -->
         <div class="row g-4">
           <div class="col-md-6 col-lg-3">
             <div class="card border-0 shadow-sm h-100">
@@ -248,7 +241,6 @@
           </div>
         </div>
 
-        <!-- Recent Activity -->
         <div class="card border-0 shadow-sm mt-4">
           <div class="card-body p-4">
             <h5 class="fw-bold mb-4">
@@ -311,7 +303,6 @@ const recentActivities = ref([
 ])
 
 onMounted(() => {
-  // Load user data from localStorage or API
   const savedUser = localStorage.getItem('user')
   if (savedUser) {
     Object.assign(user, JSON.parse(savedUser))
@@ -340,8 +331,6 @@ const saveProfile = () => {
   Object.assign(user, formData)
   localStorage.setItem('user', JSON.stringify(user))
   editMode.value = false
-
-  // Show success message
   showNotification('Profile updated successfully!', 'success')
 }
 
@@ -378,7 +367,6 @@ const logout = () => {
 }
 
 const showNotification = (message) => {
-  // You can implement a toast notification system here
   alert(message)
 }
 </script>

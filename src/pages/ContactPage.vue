@@ -6,7 +6,6 @@
     </p>
 
     <form @submit.prevent="handleSubmit" class="card p-4 shadow-sm">
-      <!-- Name -->
       <div class="mb-3">
         <label for="name" class="form-label">Full Name</label>
         <input
@@ -19,7 +18,6 @@
         />
       </div>
 
-      <!-- Email -->
       <div class="mb-3">
         <label for="email" class="form-label">Email Address</label>
         <input
@@ -32,7 +30,6 @@
         />
       </div>
 
-      <!-- Message -->
       <div class="mb-3">
         <label for="message" class="form-label">Message</label>
         <textarea
@@ -45,11 +42,9 @@
         ></textarea>
       </div>
 
-      <!-- Submit -->
       <button type="submit" class="btn btn-primary w-100">Send Message</button>
     </form>
 
-    <!-- Success Alert -->
     <div v-if="submitted" class="alert alert-success mt-4">
       Thank you, {{ name }}! Your message has been sent.
     </div>
@@ -71,8 +66,6 @@ const handleSubmit = () => {
     message: message.value,
   })
   submitted.value = true
-
-  // Reset form
   name.value = ""
   email.value = ""
   message.value = ""

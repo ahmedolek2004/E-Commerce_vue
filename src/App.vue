@@ -14,11 +14,10 @@ import Navbar from './layouts/NavbarPage.vue'
 import Footer from './layouts/FooterPage.vue'
 </script>
 <style scoped>
-  body {
+body {
   margin: 0;
   font-family: 'Segoe UI', sans-serif;
   background: #f8f9fa;
   overflow-x: hidden;
 }
-
 </style>

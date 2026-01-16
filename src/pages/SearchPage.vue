@@ -29,13 +29,10 @@ import { useRoute, RouterLink } from "vue-router"
 import { db } from "../firebase"
 import { collection, onSnapshot } from "firebase/firestore"
 
-//  Route
 const route = useRoute()
-
-//  Search query (dynamic)
 const query = ref(route.query.query?.toLowerCase() || "")
+const products = ref([])
 
-//  Watch for changes in URL search
 watch(
   () => route.query.query,
   (newVal) => {
@@ -43,10 +40,6 @@ watch(
   }
 )
 
-//  Products
-const products = ref([])
-
-//  Load from Firestore
 onMounted(() => {
   onSnapshot(collection(db, "products"), (snapshot) => {
     products.value = snapshot.docs.map(doc => ({
@@ -56,7 +49,6 @@ onMounted(() => {
   })
 })
 
-//  Filtered results
 const filteredProducts = computed(() => {
   if (!query.value) return []
   return products.value.filter(p =>
@@ -65,7 +57,6 @@ const filteredProducts = computed(() => {
   )
 })
 
-//  Format price
 const formatCurrency = (value) => `${value.toFixed(2)} EGP`
 </script>
 

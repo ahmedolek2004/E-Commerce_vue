@@ -2,7 +2,6 @@
   <div class="container py-5">
     <h1 class="mb-4">About Us</h1>
 
-    <!-- Section 1 -->
     <div class="mb-4">
       <p class="lead text-muted">
         Welcome to our store! We are passionate about delivering high-quality products
@@ -10,7 +9,6 @@
       </p>
     </div>
 
-    <!-- Section 2 -->
     <div class="row mb-4">
       <div class="col-md-6">
         <h3>Our Mission</h3>
@@ -28,7 +26,6 @@
       </div>
     </div>
 
-    <!-- Section 3 -->
     <div class="row mb-4">
       <div class="col-md-4">
         <div class="card shadow-sm h-100">
@@ -56,7 +53,6 @@
       </div>
     </div>
 
-    <!-- Section 4 -->
     <div class="text-center mt-5">
       <h4>Contact Us</h4>
       <p class="text-muted">Have questions? <RouterLink to="/contact">Get in touch</RouterLink> with us today.</p>

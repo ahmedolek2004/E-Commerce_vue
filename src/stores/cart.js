@@ -2,7 +2,6 @@ import { defineStore } from "pinia"
 import { ref, computed } from "vue"
 
 export const useCartStore = defineStore("cart", () => {
-
   const cart = ref(JSON.parse(localStorage.getItem("cart")) || [])
 
   const saveCart = () => {
@@ -11,7 +10,7 @@ export const useCartStore = defineStore("cart", () => {
 
   const addToCart = (product) => {
     const existing = cart.value.find(p => p.id === product.id)
-
+    
     if (existing) {
       existing.quantity++
     } else {
@@ -23,7 +22,7 @@ export const useCartStore = defineStore("cart", () => {
         quantity: 1
       })
     }
-
+    
     saveCart()
   }
 

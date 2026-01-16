@@ -26,10 +26,10 @@
 <script setup>
 import { ref } from "vue"
 
-import UsersTab from "./tabs/UsersTab.vue"
-import ProductsTab from "./tabs/ProductsTab.vue"
-import CategoriesTab from "./tabs/CategoriesTab.vue"
-import DealsTab from "./tabs/DealsTab.vue"
+import UsersTab from "./Tabs/AdminUsers.vue"
+import ProductsTab from "./Tabs/AdminProducts.vue"
+import CategoriesTab from "./Tabs/AdminCategories.vue"
+import DealsTab from "./Tabs/AdminDeals.vue"
 
 const activeTab = ref("users")
 

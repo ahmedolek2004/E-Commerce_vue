@@ -2,7 +2,6 @@
   <div class="container py-5">
     <h1 class="mb-4">Checkout</h1>
     <form @submit.prevent="handleCheckout" class="row g-3">
-      <!-- Customer Info -->
       <div class="col-md-6">
         <label for="name" class="form-label">Full Name</label>
         <input v-model="name" type="text" class="form-control" id="name" required />
@@ -12,7 +11,6 @@
         <input v-model="email" type="email" class="form-control" id="email" required />
       </div>
 
-      <!-- Address -->
       <div class="col-12">
         <label for="address" class="form-label">Address</label>
         <input v-model="address" type="text" class="form-control" id="address" required />
@@ -26,7 +24,6 @@
         <input v-model="zip" type="text" class="form-control" id="zip" required />
       </div>
 
-      <!-- Payment -->
       <div class="col-md-6">
         <label for="cardNumber" class="form-label">Card Number</label>
         <input v-model="cardNumber" type="text" class="form-control" id="cardNumber" required />
@@ -40,7 +37,6 @@
         <input v-model="cvv" type="text" class="form-control" id="cvv" required />
       </div>
 
-      <!-- Submit -->
       <div class="col-12">
         <button type="submit" class="btn btn-primary w-100">Place Order</button>
       </div>
