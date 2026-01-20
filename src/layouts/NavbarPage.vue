@@ -1,659 +1,345 @@
 <template>
-  <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-lg sticky-top">
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm sticky-top main-nav">
     <div class="container px-3 px-lg-4">
 
       <RouterLink class="navbar-brand d-flex align-items-center" to="/">
-        <i class="bi bi-shop-window fs-2 me-2"></i>
-        <span class="fw-bold fs-4 d-none d-md-inline">Shop<span class="text-warning">Hub</span></span>
+        <div class="logo-box me-2">
+          <i class="bi bi-shop-window"></i>
+        </div>
+        <span class="brand-name">Shop<span class="text-warning">Hub</span></span>
       </RouterLink>
 
-      <button
-        class="btn btn-outline-light d-lg-none me-2"
-        @click="toggleMobileSearch"
-        type="button"
-      >
-        <i class="bi bi-search"></i>
-      </button>
+      <div class="d-flex d-lg-none align-items-center gap-3 ms-auto">
+        <button class="icon-btn-mobile" @click="toggleMobileSearch">
+          <i class="bi bi-search"></i>
+        </button>
+        <RouterLink class="icon-btn-mobile position-relative" to="/cart">
+          <i class="bi bi-cart3"></i>
+          <span v-if="cartStore.cartCount > 0" class="badge-count">{{ cartStore.cartCount }}</span>
+        </RouterLink>
+        <button class="burger-menu" @click="toggleMobileMenu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
 
-      <RouterLink
-        class="btn btn-outline-light d-lg-none me-2 position-relative"
-        to="/cart"
-      >
-        <i class="bi bi-cart3"></i>
-        <span
-          v-if="cartStore.cartCount > 0"
-          class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
-          style="font-size: 0.6rem; padding: 0.25em 0.5em;"
-        >
-          {{ cartStore.cartCount }}
-        </span>
-      </RouterLink>
-
-      <button
-        class="navbar-toggler border-0"
-        type="button"
-        @click="toggleMobileMenu"
-        :aria-expanded="mobileMenuOpen"
-        aria-label="Toggle navigation"
-      >
-        <span class="navbar-toggler-icon"></span>
-      </button>
-
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav mx-auto">
-          <li class="nav-item">
-            <RouterLink
-              class="nav-link d-flex flex-column align-items-center mx-2"
-              to="/"
-              active-class="active"
-              @click="closeMobileMenu"
-            >
-              <i class="bi bi-house-door fs-5 mb-1"></i>
-              <span class="nav-text">Home</span>
-            </RouterLink>
-          </li>
-
-          <li class="nav-item">
-            <RouterLink
-              class="nav-link d-flex flex-column align-items-center mx-2"
-              to="/products"
-              active-class="active"
-              @click="closeMobileMenu"
-            >
-              <i class="bi bi-box-seam fs-5 mb-1"></i>
-              <span class="nav-text">Products</span>
-            </RouterLink>
-          </li>
-
-          <li class="nav-item">
-            <RouterLink
-              class="nav-link d-flex flex-column align-items-center mx-2"
-              to="/categories"
-              active-class="active"
-              @click="closeMobileMenu"
-            >
-              <i class="bi bi-grid-3x3-gap fs-5 mb-1"></i>
-              <span class="nav-text">Categories</span>
-            </RouterLink>
-          </li>
-
-          <li class="nav-item">
-            <RouterLink
-              class="nav-link d-flex flex-column align-items-center mx-2"
-              to="/deals"
-              active-class="active"
-              @click="closeMobileMenu"
-            >
-              <i class="bi bi-tags fs-5 mb-1"></i>
-              <span class="nav-text">Deals</span>
-              <span class="badge bg-danger badge-sm">HOT</span>
-            </RouterLink>
-          </li>
-
-          <li class="nav-item">
-            <RouterLink
-              class="nav-link d-flex flex-column align-items-center mx-2"
-              to="/about"
-              active-class="active"
-              @click="closeMobileMenu"
-            >
-              <i class="bi bi-info-circle fs-5 mb-1"></i>
-              <span class="nav-text">About</span>
+      <div class="collapse navbar-collapse" id="mainDesktopNav">
+        <ul class="navbar-nav mx-auto align-items-center">
+          <li v-for="link in navLinks" :key="link.path" class="nav-item">
+            <RouterLink class="nav-link-custom" :to="link.path" active-class="active">
+              <i :class="['bi', link.icon]"></i>
+              <span>{{ link.name }}</span>
+              <span v-if="link.hot" class="hot-badge">HOT</span>
             </RouterLink>
           </li>
         </ul>
 
-        <div class="d-none d-lg-flex align-items-center" style="max-width: 400px;">
-          <div class="input-group search-group">
-            <input
-              v-model="searchQuery"
-              type="text"
-              class="form-control border-end-0"
-              placeholder="Search products..."
-              @keyup.enter="goSearch"
-            >
-            <button class="btn btn-light border-start-0" @click="goSearch">
-              <i class="bi bi-search"></i>
-            </button>
-          </div>
+        <div class="search-box-desktop d-none d-lg-flex me-4">
+          <i class="bi bi-search"></i>
+          <input v-model="searchQuery" type="text" placeholder="Find products..." @keyup.enter="goSearch">
         </div>
 
-        <ul class="navbar-nav d-none d-lg-flex">
-          <li class="nav-item dropdown">
-            <RouterLink
-              class="nav-link d-flex flex-column align-items-center mx-2 position-relative"
-              to="/cart"
-            >
-              <i class="bi bi-cart3 fs-5 mb-1"></i>
-              <span class="nav-text">Cart</span>
-              <span
-                v-if="cartStore.cartCount > 0"
-                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
-                style="font-size: 0.65rem; padding: 0.25em 0.5em;"
-              >
-                {{ cartStore.cartCount }}
-              </span>
-            </RouterLink>
-          </li>
+        <div class="dropdown d-none d-lg-block">
+          <div class="user-trigger dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+            <div class="user-avatar-mini">
+              <i :class="currentUser ? 'bi-person-fill' : 'bi-person-lock'"></i>
+            </div>
+            <div class="user-info-text">
+              <span class="welcome-msg">{{ currentUser ? 'Welcome' : 'Hello,' }}</span>
+              <span class="user-name-bold text-truncate">{{ currentUser ? currentUser.email.split('@')[0] : 'Sign In' }}</span>
+            </div>
+          </div>
 
-          <li class="nav-item dropdown">
-            <a
-              class="nav-link d-flex flex-column align-items-center mx-2 dropdown-toggle"
-              href="#"
-              role="button"
-              data-bs-toggle="dropdown"
-            >
-              <i class="bi bi-person-circle fs-5 mb-1"></i>
-              <span class="nav-text">
-                {{ currentUser ? 'Account' : 'Login' }}
-              </span>
-            </a>
-            <ul class="dropdown-menu dropdown-menu-end shadow border-0">
-              <template v-if="currentUser">
-                <li>
-                  <div class="dropdown-item-text px-3 py-2">
-                    <small class="text-muted">Signed in as</small>
-                    <div class="fw-semibold">{{ currentUser.email }}</div>
-                  </div>
-                </li>
-                <li><hr class="dropdown-divider"></li>
-                <li>
-                  <RouterLink class="dropdown-item" to="/profile" @click="closeMobileMenu">
-                    <i class="bi bi-person me-2"></i>My Profile
-                  </RouterLink>
-                </li>
-                <li>
-                  <RouterLink class="dropdown-item" to="/orders" @click="closeMobileMenu">
-                    <i class="bi bi-bag me-2"></i>My Orders
-                  </RouterLink>
-                </li>
-                <li>
-                  <RouterLink class="dropdown-item" to="/wishlist" @click="closeMobileMenu">
-                    <i class="bi bi-heart me-2"></i>Wishlist
-                  </RouterLink>
-                </li>
-                <li v-if="isAdmin">
-                  <hr class="dropdown-divider">
-                  <RouterLink class="dropdown-item text-warning" to="/admin" @click="closeMobileMenu">
-                    <i class="bi bi-shield-check me-2"></i>Admin Panel
-                  </RouterLink>
-                </li>
-                <li><hr class="dropdown-divider"></li>
-                <li>
-                  <button class="dropdown-item text-danger" @click="handleLogout">
-                    <i class="bi bi-box-arrow-right me-2"></i>Logout
-                  </button>
-                </li>
-              </template>
-
-              <template v-else>
-                <li>
-                  <RouterLink class="dropdown-item" to="/auth" @click="closeMobileMenu">
-                    <i class="bi bi-box-arrow-in-right me-2"></i>Sign In
-                  </RouterLink>
-                </li>
-                <li>
-                  <RouterLink class="dropdown-item" to="/auth?mode=register" @click="closeMobileMenu">
-                    <i class="bi bi-person-plus me-2"></i>Register
-                  </RouterLink>
-                </li>
-                <li><hr class="dropdown-divider"></li>
-                <li>
-                  <RouterLink class="dropdown-item" to="/about" @click="closeMobileMenu">
-                    <i class="bi bi-info-circle me-2"></i>About Us
-                  </RouterLink>
-                </li>
-                <li>
-                  <RouterLink class="dropdown-item" to="/contact" @click="closeMobileMenu">
-                    <i class="bi bi-envelope me-2"></i>Contact Us
-                  </RouterLink>
-                </li>
-              </template>
-            </ul>
-          </li>
-        </ul>
-      </div>
-    </div>
-
-    <div
-      v-if="mobileSearchOpen"
-      class="bg-light py-3 d-lg-none border-top"
-      style="animation: slideDown 0.3s ease-out;"
-    >
-      <div class="container">
-        <div class="input-group">
-          <input
-            v-model="searchQuery"
-            type="text"
-            class="form-control"
-            placeholder="Search products..."
-            ref="mobileSearchInput"
-            @keyup.enter="goSearch"
-          >
-          <button class="btn btn-primary" @click="goSearch">
-            <i class="bi bi-search"></i>
-          </button>
-          <button class="btn btn-outline-secondary" @click="toggleMobileSearch">
-            <i class="bi bi-x"></i>
-          </button>
+          <ul class="dropdown-menu dropdown-menu-end user-dropdown-card animate-pop">
+            <template v-if="currentUser">
+              <li class="user-card-header bg-light">
+                <i class="bi bi-person-circle fs-2 text-primary"></i>
+                <div class="ms-2 overflow-hidden">
+                  <h6 class="mb-0 text-truncate">{{ currentUser.email }}</h6>
+                  <span class="badge bg-success-soft text-success px-2 py-1">Member</span>
+                </div>
+              </li>
+              <li><RouterLink class="dropdown-item py-2" to="/profile"><i class="bi bi-person-badge me-2"></i>My Profile</RouterLink></li>
+              <li><RouterLink class="dropdown-item py-2" to="/orders"><i class="bi bi-box-seam me-2"></i>Order History</RouterLink></li>
+              <li><RouterLink class="dropdown-item py-2" to="/wishlist"><i class="bi bi-heart me-2"></i>Wishlist</RouterLink></li>
+              <li v-if="isAdmin">
+                <hr class="dropdown-divider">
+                <RouterLink class="dropdown-item text-warning fw-bold py-2" to="/admin"><i class="bi bi-shield-lock me-2"></i>Admin Dashboard</RouterLink>
+              </li>
+              <li><hr class="dropdown-divider"></li>
+              <li><button class="dropdown-item text-danger py-2" @click="handleLogout"><i class="bi bi-power me-2"></i>Logout</button></li>
+            </template>
+            <template v-else>
+              <li class="p-4 text-center">
+                <div class="mb-3"><i class="bi bi-person-circle fs-1 text-muted"></i></div>
+                <p class="small text-muted mb-3">Login to track orders and manage your cart.</p>
+                <div class="d-grid gap-2">
+                  <RouterLink class="btn btn-primary btn-sm rounded-pill" to="/auth">Sign In</RouterLink>
+                  <RouterLink class="btn btn-outline-primary btn-sm rounded-pill" to="/auth?mode=register">Create Account</RouterLink>
+                </div>
+              </li>
+            </template>
+          </ul>
         </div>
       </div>
     </div>
 
-    <div
-      class="mobile-menu-overlay"
-      :class="{ 'show': mobileMenuOpen }"
-      @click="closeMobileMenu"
-    ></div>
-
-    <div
-      class="mobile-menu"
-      :class="{ 'show': mobileMenuOpen }"
-    >
-      <div class="mobile-menu-header bg-primary text-white p-4">
-        <div class="d-flex justify-content-between align-items-center">
-          <h5 class="mb-0">
-            <i class="bi bi-list me-2"></i>Menu
-          </h5>
-          <button class="btn btn-outline-light btn-sm" @click="closeMobileMenu">
-            <i class="bi bi-x-lg"></i>
-          </button>
-        </div>
-
-        <div class="mt-3 d-flex align-items-center">
-          <i class="bi" :class="currentUser ? 'bi-person-check' : 'bi-person-circle'"></i>
-          <div class="ms-3">
-            <h6 class="mb-0">
-              {{ currentUser ? currentUser.email : 'Welcome Guest' }}
-            </h6>
-            <small>
-              {{ currentUser ? 'Signed in' : 'Sign in to your account' }}
-            </small>
-          </div>
-        </div>
+    <div class="sidebar-mask" :class="{ 'active': mobileMenuOpen }" @click="closeMobileMenu"></div>
+    <aside class="side-menu" :class="{ 'open': mobileMenuOpen }">
+      <div class="side-menu-head bg-primary">
+        <h5 class="m-0">Menu Navigator</h5>
+        <button class="btn-close btn-close-white" @click="closeMobileMenu"></button>
       </div>
-
-      <div class="mobile-menu-body">
+      <div class="side-menu-body">
         <div class="list-group list-group-flush">
-          <RouterLink
-            class="list-group-item list-group-item-action border-0 py-3"
-            to="/"
-            @click="closeMobileMenu"
-          >
-            <i class="bi bi-house-door me-3"></i>Home
+          <RouterLink v-for="link in navLinks" :key="link.path" :to="link.path" class="list-item" @click="closeMobileMenu">
+            <i :class="['bi', link.icon]"></i> {{ link.name }}
+            <span v-if="link.hot" class="ms-auto badge bg-danger rounded-pill">Hot</span>
           </RouterLink>
 
-          <RouterLink
-            class="list-group-item list-group-item-action border-0 py-3"
-            to="/products"
-            @click="closeMobileMenu"
-          >
-            <i class="bi bi-box-seam me-3"></i>Products
-            <span class="badge bg-primary float-end">{{ cartStore.cartCount }}</span>
-          </RouterLink>
-
-          <RouterLink
-            class="list-group-item list-group-item-action border-0 py-3"
-            to="/categories"
-            @click="closeMobileMenu"
-          >
-            <i class="bi bi-grid-3x3-gap me-3"></i>Categories
-          </RouterLink>
-
-          <RouterLink
-            class="list-group-item list-group-item-action border-0 py-3"
-            to="/deals"
-            @click="closeMobileMenu"
-          >
-            <i class="bi bi-tags me-3"></i>Hot Deals
-            <span class="badge bg-danger float-end">HOT</span>
-          </RouterLink>
-
-          <RouterLink
-            class="list-group-item list-group-item-action border-0 py-3"
-            to="/cart"
-            @click="closeMobileMenu"
-          >
-            <i class="bi bi-cart3 me-3"></i>Shopping Cart
-            <span class="badge bg-primary float-end">{{ cartStore.cartCount }}</span>
-          </RouterLink>
+          <div class="divider">User Center</div>
 
           <template v-if="currentUser">
-            <RouterLink
-              class="list-group-item list-group-item-action border-0 py-3"
-              to="/profile"
-              @click="closeMobileMenu"
-            >
-              <i class="bi bi-person me-3"></i>My Profile
-            </RouterLink>
-
-            <RouterLink
-              class="list-group-item list-group-item-action border-0 py-3"
-              to="/orders"
-              @click="closeMobileMenu"
-            >
-              <i class="bi bi-bag me-3"></i>My Orders
-            </RouterLink>
-
-            <RouterLink
-              v-if="isAdmin"
-              class="list-group-item list-group-item-action border-0 py-3 text-warning"
-              to="/admin"
-              @click="closeMobileMenu"
-            >
-              <i class="bi bi-shield-check me-3"></i>Admin Panel
-            </RouterLink>
-
-            <button
-              class="list-group-item list-group-item-action border-0 py-3 text-danger"
-              @click="handleLogout"
-            >
-              <i class="bi bi-box-arrow-right me-3"></i>Logout
-            </button>
+            <RouterLink to="/profile" class="list-item" @click="closeMobileMenu"><i class="bi bi-person"></i> Profile</RouterLink>
+            <RouterLink to="/orders" class="list-item" @click="closeMobileMenu"><i class="bi bi-bag-check"></i> Orders</RouterLink>
+            <button class="list-item text-danger border-0 bg-transparent w-100 text-start" @click="handleLogout"><i class="bi bi-box-arrow-right"></i> Logout</button>
           </template>
-
           <template v-else>
-            <RouterLink
-              class="list-group-item list-group-item-action border-0 py-3"
-              to="/auth"
-              @click="closeMobileMenu"
-            >
-              <i class="bi bi-box-arrow-in-right me-3"></i>Sign In
-            </RouterLink>
+            <div class="px-4 py-3">
+              <RouterLink to="/auth" class="btn btn-primary w-100 rounded-pill mb-2" @click="closeMobileMenu">Sign In</RouterLink>
+              <RouterLink to="/auth?mode=register" class="btn btn-outline-primary w-100 rounded-pill" @click="closeMobileMenu">Register</RouterLink>
+            </div>
           </template>
-
-          <RouterLink
-            class="list-group-item list-group-item-action border-0 py-3"
-            to="/about"
-            @click="closeMobileMenu"
-          >
-            <i class="bi bi-info-circle me-3"></i>About Us
-          </RouterLink>
-
-          <RouterLink
-            class="list-group-item list-group-item-action border-0 py-3"
-            to="/contact"
-            @click="closeMobileMenu"
-          >
-            <i class="bi bi-envelope me-3"></i>Contact Us
-          </RouterLink>
         </div>
       </div>
+    </aside>
 
-      <div class="mobile-menu-footer border-top p-3">
-        <div class="text-center">
-          <small class="text-muted">© 2024 ShopHub. All rights reserved.</small>
-          <div v-if="currentUser" class="mt-2">
-            <small class="text-success">
-              <i class="bi bi-check-circle me-1"></i>Signed in
-            </small>
-          </div>
+    <Transition name="slide-top">
+      <div v-if="mobileSearchOpen" class="mobile-search-full bg-primary">
+        <div class="container h-100 d-flex align-items-center gap-2">
+          <input v-model="searchQuery" ref="mobileSearchInput" type="text" class="form-control" placeholder="What are you looking for?" @keyup.enter="goSearch">
+          <button class="btn btn-warning" @click="goSearch"><i class="bi bi-search"></i></button>
+          <button class="btn btn-link text-white text-decoration-none" @click="toggleMobileSearch">Cancel</button>
         </div>
       </div>
-    </div>
+    </Transition>
   </nav>
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue"
-import { RouterLink, useRouter } from "vue-router"
-import { useCartStore } from "../stores/cart"
-import { auth } from "../firebase"
-import { onAuthStateChanged, signOut } from "firebase/auth"
-import { checkAdminRole } from "../utils/admin"
+import { ref, onMounted, watch } from "vue";
+import { RouterLink, useRouter, useRoute } from "vue-router";
+import { useCartStore } from "../stores/cart";
+import { auth } from "../firebase";
+import { onAuthStateChanged, signOut } from "firebase/auth";
+import { checkAdminRole } from "../utils/admin";
 
-const router = useRouter()
-const cartStore = useCartStore()
-const searchQuery = ref("")
-const mobileMenuOpen = ref(false)
-const mobileSearchOpen = ref(false)
-const mobileSearchInput = ref(null)
+const router = useRouter();
+const route = useRoute();
+const cartStore = useCartStore();
 
-const currentUser = ref(null)
-const isAdmin = ref(false)
+const searchQuery = ref("");
+const mobileMenuOpen = ref(false);
+const mobileSearchOpen = ref(false);
+const mobileSearchInput = ref(null);
+const currentUser = ref(null);
+const isAdmin = ref(false);
 
-const goSearch = () => {
-  if (searchQuery.value.trim() !== "") {
-    router.push(`/search?query=${searchQuery.value}`)
-    closeMobileMenu()
-    closeMobileSearch()
-  }
-}
+const navLinks = [
+  { name: 'Home', path: '/', icon: 'bi-house' },
+  { name: 'Shop', path: '/products', icon: 'bi-grid' },
+  { name: 'Deals', path: '/deals', icon: 'bi-percent', hot: true },
+  { name: 'About', path: '/about', icon: 'bi-info-circle' },
+  { name: 'Contact', path: '/contact', icon: 'bi-envelope' }
+];
 
 const toggleMobileMenu = () => {
-  mobileMenuOpen.value = !mobileMenuOpen.value
-  if (mobileMenuOpen.value) {
-    document.body.style.overflow = 'hidden'
-  } else {
-    document.body.style.overflow = 'auto'
-  }
-}
+  mobileMenuOpen.value = !mobileMenuOpen.value;
+  document.body.style.overflow = mobileMenuOpen.value ? 'hidden' : '';
+};
 
 const closeMobileMenu = () => {
-  mobileMenuOpen.value = false
-  document.body.style.overflow = 'auto'
-}
+  mobileMenuOpen.value = false;
+  document.body.style.overflow = '';
+};
 
-const toggleMobileSearch = async () => {
-  mobileSearchOpen.value = !mobileSearchOpen.value
-  if (mobileSearchOpen.value) {
-    setTimeout(() => {
-      mobileSearchInput.value?.focus()
-    }, 100)
+const toggleMobileSearch = () => {
+  mobileSearchOpen.value = !mobileSearchOpen.value;
+  if (mobileSearchOpen.value) setTimeout(() => mobileSearchInput.value?.focus(), 150);
+};
+
+const goSearch = () => {
+  if (searchQuery.value.trim()) {
+    router.push({ path: '/search', query: { query: searchQuery.value } });
+    mobileSearchOpen.value = false;
+    closeMobileMenu();
   }
-}
-const closeMobileSearch = () => {
-  mobileSearchOpen.value = false
-}
+};
 
 const handleLogout = async () => {
   try {
-    await signOut(auth)
-    currentUser.value = null
-    isAdmin.value = false
-    closeMobileMenu()
-    router.push("/auth")
-  } catch (error) {
-    console.error("Logout error:", error)
-  }
-}
+    await signOut(auth);
+    currentUser.value = null;
+    isAdmin.value = false;
+    router.push("/auth");
+    closeMobileMenu();
+  } catch (error) { console.error(error); }
+};
 
 onMounted(() => {
   onAuthStateChanged(auth, async (user) => {
-    currentUser.value = user
-    isAdmin.value = user ? await checkAdminRole(user) : false
-  })
-})
+    currentUser.value = user;
+    isAdmin.value = user ? await checkAdminRole(user) : false;
+  });
+});
 
-document.addEventListener('click', (event) => {
-  const mobileMenu = document.querySelector('.mobile-menu')
-  const navbarToggler = document.querySelector('.navbar-toggler')
-
-  if (mobileMenuOpen.value &&
-      mobileMenu &&
-      !mobileMenu.contains(event.target) &&
-      navbarToggler &&
-      !navbarToggler.contains(event.target)) {
-    closeMobileMenu()
-  }
-})
+watch(() => route.path, () => closeMobileMenu());
 </script>
 
 <style scoped>
-.navbar {
-  padding-top: 0.75rem;
-  padding-bottom: 0.75rem;
-}
-
-.navbar-brand {
-  color: white !important;
-  transition: transform 0.3s ease;
-}
-
-.navbar-brand:hover {
-  transform: scale(1.05);
-}
-
-.nav-link {
-  color: rgba(255, 255, 255, 0.85) !important;
-  padding: 0.5rem 0.75rem !important;
-  border-radius: 8px;
-  transition: all 0.3s ease;
-  min-width: 70px;
-}
-
-.nav-link.active {
-  background: rgba(255, 255, 255, 0.15);
-  color: white !important;
-}
-
-.nav-link:hover:not(.active) {
-  background: rgba(255, 255, 255, 0.1);
-  transform: translateY(-2px);
-}
-
-.nav-text {
-  font-size: 0.75rem;
-  font-weight: 500;
-}
-
-.search-group {
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
-  overflow: hidden;
-}
-
-.search-group input {
-  border: none;
-  padding: 0.75rem 1rem;
-}
-
-.search-group button {
-  padding: 0.75rem 1.25rem;
-}
-
-/* Mobile Menu Styles */
-.mobile-menu-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 1040;
-  opacity: 0;
-  visibility: hidden;
-  transition: all 0.3s ease;
-}
-
-.mobile-menu-overlay.show {
-  opacity: 1;
-  visibility: visible;
-}
-
-.mobile-menu {
-  position: fixed;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  width: 320px;
-  background: white;
+/* --- 1. Global Navbar Styles --- */
+.main-nav {
+  background: linear-gradient(90deg, #0d6efd 0%, #1e40af 100%);
+  padding: 0.6rem 0;
   z-index: 1050;
-  transform: translateX(100%);
-  transition: transform 0.3s ease-out;
-  box-shadow: -5px 0 25px rgba(0, 0, 0, 0.1);
-  display: flex;
-  flex-direction: column;
 }
 
-.mobile-menu.show {
-  transform: translateX(0);
+.logo-box {
+  background: white; color: #0d6efd;
+  width: 42px; height: 42px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 12px; font-size: 1.5rem;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
 
-.mobile-menu-header {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+.brand-name {
+  font-size: 1.6rem; font-weight: 800;
+  letter-spacing: -0.5px; color: white;
 }
 
-.mobile-menu-header .bi {
-  font-size: 2rem;
+/* --- 2. Desktop Navigation --- */
+.nav-link-custom {
+  color: rgba(255,255,255,0.85); text-decoration: none;
+  padding: 0.5rem 1rem; margin: 0 0.2rem;
+  display: flex; flex-direction: column; align-items: center;
+  transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
 }
 
-.mobile-menu-body {
-  flex: 1;
-  overflow-y: auto;
-  padding: 1rem 0;
+.nav-link-custom i { font-size: 1.2rem; margin-bottom: 2px; }
+.nav-link-custom span { font-size: 0.7rem; font-weight: 600; text-transform: uppercase; }
+
+.nav-link-custom:hover, .nav-link-custom.active { color: white; }
+.nav-link-custom.active::after {
+  content: ''; position: absolute; bottom: -5px;
+  width: 25px; height: 3px; background: #ffc107; border-radius: 10px;
 }
 
-.mobile-menu-footer {
-  background: #f8f9fa;
+/* --- 3. Desktop Search & User Profile --- */
+.search-box-desktop {
+  background: rgba(255,255,255,0.12);
+  border-radius: 50px; padding: 0.4rem 1.2rem;
+  align-items: center; border: 1px solid rgba(255,255,255,0.2);
+  transition: 0.3s;
 }
 
-.list-group-item {
-  border-left: 4px solid transparent;
-  transition: all 0.2s ease;
+.search-box-desktop:focus-within { background: white; width: 280px; }
+.search-box-desktop input {
+  background: transparent; border: none; color: white;
+  outline: none; font-size: 0.85rem; margin-left: 8px;
+}
+.search-box-desktop:focus-within input { color: #333; }
+.search-box-desktop i { color: rgba(255,255,255,0.7); }
+.search-box-desktop:focus-within i { color: #0d6efd; }
+
+.user-trigger {
+  display: flex; align-items: center; gap: 10px;
+  cursor: pointer; padding: 4px 12px;
+  background: rgba(255,255,255,0.1); border-radius: 50px;
+  border: 1px solid rgba(255,255,255,0.1); transition: 0.3s;
 }
 
-.list-group-item:hover {
-  background: #f8f9fa;
-  border-left-color: #0d6efd;
-  padding-left: 1.5rem;
+.user-trigger:hover { background: rgba(255,255,255,0.2); }
+
+.user-avatar-mini {
+  width: 32px; height: 32px; background: white;
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  color: #0d6efd; font-size: 1.1rem;
 }
 
-.list-group-item i {
-  width: 24px;
-  text-align: center;
+.user-info-text { display: flex; flex-direction: column; line-height: 1.2; }
+.welcome-msg { font-size: 0.65rem; color: rgba(255,255,255,0.7); }
+.user-name-bold { font-size: 0.85rem; font-weight: 700; color: white; max-width: 100px; }
+
+/* --- 4. User Dropdown Card --- */
+.user-dropdown-card {
+  width: 280px; border-radius: 16px; padding: 0.5rem;
+  margin-top: 15px; border: none;
 }
 
-.badge-sm {
-  font-size: 0.65rem;
-  padding: 0.25em 0.5em;
+.user-card-header {
+  padding: 1rem; display: flex; align-items: center;
+  border-radius: 12px; margin-bottom: 0.5rem;
 }
 
-/* Animations */
-@keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.bg-success-soft { background: #d1fae5; }
+
+/* --- 5. Mobile Sidebar --- */
+.side-menu {
+  position: fixed; top: 0; right: -320px;
+  width: 320px; height: 100vh; background: white;
+  z-index: 2000; transition: 0.4s;
+  display: flex; flex-direction: column;
+}
+.side-menu.open { right: 0; }
+
+.sidebar-mask {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.5); backdrop-filter: blur(4px);
+  z-index: 1999; opacity: 0; visibility: hidden; transition: 0.3s;
+}
+.sidebar-mask.active { opacity: 1; visibility: visible; }
+
+.side-menu-head { padding: 2rem 1.5rem; color: white; display: flex; justify-content: space-between; align-items: center; }
+
+.list-item {
+  padding: 1rem 1.5rem; color: #444; text-decoration: none;
+  display: flex; align-items: center; gap: 15px; font-weight: 500;
+  border-radius: 8px; margin: 0.2rem 0.8rem; transition: 0.2s;
+}
+.list-item:hover { background: #f0f7ff; color: #0d6efd; }
+.list-item i { font-size: 1.2rem; color: #0d6efd; }
+
+.divider {
+  padding: 1.5rem 1.5rem 0.5rem; font-size: 0.7rem;
+  font-weight: 800; text-transform: uppercase; color: #999;
 }
 
-/* Responsive adjustments */
-@media (max-width: 992px) {
-  .navbar-nav .nav-link {
-    margin: 0.25rem 0;
-  }
+/* --- 6. Helpers & Badges --- */
+.badge-count {
+  position: absolute; top: -5px; right: -5px;
+  background: #ffc107; color: #000; font-size: 0.65rem;
+  font-weight: 800; width: 18px; height: 18px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 50%; border: 2px solid #0d6efd;
 }
 
-@media (max-width: 576px) {
-  .mobile-menu {
-    width: 280px;
-  }
-
-  .navbar {
-    padding-left: 0.5rem;
-    padding-right: 0.5rem;
-  }
+.hot-badge {
+  position: absolute; top: -5px; right: -8px;
+  background: #dc3545; color: white; font-size: 0.55rem;
+  padding: 1px 4px; border-radius: 4px; font-weight: 800;
 }
 
-/* Custom scrollbar for mobile menu */
-.mobile-menu-body::-webkit-scrollbar {
-  width: 6px;
+.burger-menu {
+  display: flex; flex-direction: column; gap: 4px;
+  background: none; border: none; padding: 0;
 }
+.burger-menu span { width: 22px; height: 2px; background: white; border-radius: 2px; }
 
-.mobile-menu-body::-webkit-scrollbar-track {
-  background: #f1f1f1;
-}
+.animate-pop { animation: pop 0.3s ease-out; }
+@keyframes pop { from { opacity: 0; transform: scale(0.9) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
 
-.mobile-menu-body::-webkit-scrollbar-thumb {
-  background: #888;
-  border-radius: 3px;
-}
-
-.mobile-menu-body::-webkit-scrollbar-thumb:hover {
-  background: #555;
+.mobile-search-full {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  z-index: 1060;
 }
 </style>
