@@ -1,3 +1,18 @@
+<script setup>
+import { RouterView } from 'vue-router'
+import Navbar from './layouts/NavbarPage.vue'
+import Footer from './layouts/FooterPage.vue'
+</script>
+
+<style scoped>
+body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background: #f8f9fa;
+  overflow-x: hidden;
+}
+</style>
+
 <template>
   <div class="min-vh-100 d-flex flex-column">
     <Navbar />
@@ -8,16 +23,4 @@
   </div>
 </template>
 
-<script setup>
-import { RouterView } from 'vue-router'
-import Navbar from './layouts/NavbarPage.vue'
-import Footer from './layouts/FooterPage.vue'
-</script>
-<style scoped>
-body {
-  margin: 0;
-  font-family: 'Segoe UI', sans-serif;
-  background: #f8f9fa;
-  overflow-x: hidden;
-}
-</style>
+
